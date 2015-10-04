@@ -1,0 +1,39 @@
+Partlist exported from /Users/radhoo/Work/pocketmagic/uradmonitor_KIT1/pcb-1.1/dosimeter.sch at 04/10/15 20:23
+
+Assembly variant: 
+
+Qty Value         Device              Parts                                     
+1                 LM317TL             IC1                                       
+8                 PINHD-1X1           BAT+, BATGND, JP1, JP2, JP3, JP4, JP5, JP6
+1                 TAC_SWITCHPTH       S2                                        
+1   1N4148DO35-7  1N4148DO35-7        D7                                        
+1   2.1MMJACKTHM  2.1MMJACKTHM        U$2                                       
+1   2.2K          R-EU_0204/7         R13                                       
+1   2.2mH         L-EU0207/10         L1                                        
+1   2N2222        2N2222              T2                                        
+2   2N2907        2N2907              T3, T6                                    
+2   2n2222        2N2222-NPN-TO92-EBC T4, T5                                    
+1   3K            R-EU_0204/7         R7                                        
+1   8Mhz          XTAL/S              Q1                                        
+4   10K           R-EU_0204/7         R2, R8, R14, R15                          
+1   10M           R-EU_0204/7         R5                                        
+1   10M 1%        R-EU_0204/7         R3                                        
+3   10nF/1KV      C5/3                C6, C10, C11                              
+1   15nF          C2.5/2              C7                                        
+1   22uF 50V      CPOL-EUE2-5         C3                                        
+3   33p           C2.5/2              C1, C2, C8                                
+1   33pF          C2.5/2              C9                                        
+1   47K 1%        R-EU_0204/7         R4                                        
+1   47uF 16V      CPOL-EUE2-5         C4                                        
+4   100           R-EU_0204/7         R1, R9, R10, R11                          
+1   100K          R-EU_0204/7         R12                                       
+1   100nF         C2.5/2              C5                                        
+1   220K          R-EU_0204/7         R6                                        
+1   ATMEGA328P    MEGA8-P             ATMEGA328P                                
+3   BYV26E        1N40047.5           D1, D2, D3                                
+1   MPSA42        2N2222              T1                                        
+1   NOKIA5110     NOKIA5110           U$1                                       
+1   SPEAKER/AL60P SPEAKER/AL60P       SP4                                       
+1   TL32YO        TL32YO              S1                                        
+1   ethernet      MA04-2              SV3                                       
+1   isp           MA05-2              SV1                                       
