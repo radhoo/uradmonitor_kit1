@@ -1,27 +1,8 @@
-/**
- *	File:       	5110.cpp
- *	Version:  		1.0
- *	Date:       	2013
- *	License:		GPL v3
- *	Description:	unbuffered driver for Nokia 3110 / 5110 LCD
- *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *  
- *	Copyright 2007 by Tony Myatt
- *	Copyright 2013 by Radu Motisan, radu.motisan@gmail.com
- *	Copyright 2016 by Magnasci SRL, www.magnasci.com
- *  
- *	This program is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- * 	(at your option) any later version.
- *
- *	This program is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * 	GNU General Public License for more details.
- *
- *	You should have received a copy of the GNU General Public License
- *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Nokia 3110 / 5110 unbuffered driver
+ * (C)2013 Radu Motisan
+ * www.pocketmagic.net
+ * Based on a work by Tony Myatt - 2007
  */
 
 #include <stdio.h>
@@ -34,7 +15,7 @@
 // we are actually using 6x8 pixels, but the last are for border
 // this means in 84x48 we have 14x6 characters
 // the list is ordonated by the ASCII codes 
-const uint8_t PROGMEM font5x7 [][CHAR_WIDTH - 1] = {
+const unsigned char PROGMEM font5x7 [][CHAR_WIDTH - 1] = {
 	{ 0x00, 0x00, 0x00, 0x00, 0x00 },   // sp
     { 0x00, 0x00, 0x2f, 0x00, 0x00 },   // !
     { 0x00, 0x07, 0x00, 0x07, 0x00 },   // "
@@ -88,7 +69,7 @@ const uint8_t PROGMEM font5x7 [][CHAR_WIDTH - 1] = {
     { 0x7F, 0x09, 0x19, 0x29, 0x46 },   // R
     { 0x46, 0x49, 0x49, 0x49, 0x31 },   // S
     { 0x01, 0x01, 0x7F, 0x01, 0x01 },   // T
-    { 0x3F, 0x40, 0x40, 0x3F },   		// U
+    { 0x3F, 0x40, 0x40, 0x3F },   // U
     { 0x1F, 0x20, 0x40, 0x20, 0x1F },   // V
     { 0x3F, 0x40, 0x38, 0x40, 0x3F },   // W
     { 0x63, 0x14, 0x08, 0x14, 0x63 },   // X
@@ -157,40 +138,59 @@ const uint8_t PROGMEM font5x7 [][CHAR_WIDTH - 1] = {
 	{ 0x0C, 0x0C, 0x0C, 0x0C, 0x0C },	//  sign 0x94
 	{ 0x0F, 0x0F, 0x0C, 0x0C, 0x0C },	//  sign 0x95
 	{ 0x0C, 0x0C, 0x0C, 0x0F, 0x0F },	//  sign 0x96
-	{ 0x1C, 0x1C, 0x3E, 0x7F, 0x00 },   //  speaker on 0x97
-	{ 0x1A, 0x14, 0x2E, 0x5F, 0x20 },   //  speaker off 0x98
-	{ 0x07, 0x75, 0x5D, 0x57, 0x70 },   //  lan on 0x99
-	{ 0x05, 0x72, 0x5D, 0x50, 0x70 },   //  lan off 0x9A
-	{ 0x00, 0x07, 0x05, 0x07, 0x00 },	// degrees 0x9B
-	{ 0x1F, 0x05, 0x72, 0x28, 0x70 }	// Pascals 0x9C
 };
 
 
-LCD_5110::LCD_5110(DigitalPin *rst, DigitalPin *ce, DigitalPin *dc, DigitalPin *data, DigitalPin *clk, DigitalPin *backlight) {
-	lcdCacheIdx = 0;
-	m_rst = rst;
-	m_ce = ce;
-	m_dc = dc;
-	m_data = data;
-	m_clk = clk;
-	m_backlight = backlight;
+
+void set(volatile uint8_t  *port, uint8_t  dq, int state) {
+	if (state)
+		*port |= (1<<dq);
+	else
+		*port &= ~(1<<dq);
 }
 
+
 /* Performs IO & LCD controller initialization */
-void LCD_5110::init() {
-	// Pull-up on reset pin
-	*m_rst = 1;
+void LCD_5110::init(
+	volatile uint8_t  *port_RST, uint8_t  dq_RST,
+	volatile uint8_t  *port_SCE, uint8_t  dq_SCE,
+	volatile uint8_t  *port_DC, uint8_t  dq_DC,
+	volatile uint8_t  *port_DATA, uint8_t  dq_DATA,
+	volatile uint8_t  *port_CLK, uint8_t  dq_CLK
+	)
+{
+	// save configuration
+	m_port_RST = port_RST; m_dq_RST = dq_RST;
+	m_port_SCE = port_SCE; m_dq_SCE = dq_SCE; 
 	
+	m_port_DC  = port_DC;  m_dq_DC = dq_DC;
+	m_port_DATA= port_DATA;m_dq_DATA = dq_DATA;
+	m_port_CLK = port_CLK; m_dq_CLK = dq_CLK;
+	
+	
+    // Pull-up on reset pin
+	set(m_port_RST, m_dq_RST, 1); //LCD_PORT |= LCD_RST_PIN;
+	
+	// Set output bits on lcd port
+	set(Port2DDR(m_port_RST), m_dq_RST, 1);
+	set(Port2DDR(m_port_SCE), m_dq_SCE, 1);
+	set(Port2DDR(m_port_DC), m_dq_DC, 1);
+	set(Port2DDR(m_port_DATA), m_dq_DATA, 1);
+	set(Port2DDR(m_port_CLK), m_dq_CLK, 1);
+	//LCD_DDR |= LCD_RST_PIN | LCD_SCE_PIN | LCD_DC_PIN | LCD_DATA_PIN | LCD_CLK_PIN;
+    
 	// Wait after VCC high for reset (max 30ms)
     _delay_ms(15);
     
     // Toggle display reset pin
-    *m_rst = 0;
-    _delay_ms(64);
-    *m_rst = 1;
+    set(m_port_RST, m_dq_RST, 0); //LCD_PORT &= ~LCD_RST_PIN;
+    //delay(); /// delay macro function #define delay() for(int i=-32000;i<32000;i++)
+	_delay_ms(64);
+    set(m_port_RST, m_dq_RST, 1);//LCD_PORT |= LCD_RST_PIN;
 
     // Disable LCD controller
-    *m_ce = 0;
+    set(m_port_SCE, m_dq_SCE, 0);//LCD_PORT |= LCD_SCE_PIN;
+
 
     send(LCD_EXTENDED_COMMANDS, LCD_CMD);  
     send(LCD_VOP, LCD_CMD);  
@@ -201,18 +201,20 @@ void LCD_5110::init() {
     
     // Clear lcd
     clear();
+	
 
 	// Set display contrast. Note: No change is visible at ambient temperature 
 	int contrast = 0x40;
-	send(LCD_EXTENDED_COMMANDS, LCD_CMD);	// LCD Extended Commands
-	send(0x80 | contrast, LCD_CMD);			// Set LCD Vop(Contrast)
-	send(LCD_HOR_ADDRESSING, LCD_CMD);		// LCD std cmds, hori addr mode
+	send(LCD_EXTENDED_COMMANDS, LCD_CMD);				// LCD Extended Commands
+	send(0x80 | contrast, LCD_CMD);		// Set LCD Vop(Contrast)
+	send(LCD_HOR_ADDRESSING, LCD_CMD);				// LCD std cmds, hori addr mode
 }
 
 
 
 // Clears the display 
-void LCD_5110::clear(void) {
+void LCD_5110::clear(void)
+{
 	lcdCacheIdx = 0;
 	base_addr(lcdCacheIdx);
 	// Set the entire cache to zero and write 0s to lcd
@@ -224,7 +226,8 @@ void LCD_5110::clear(void) {
 }
 
 // Clears an area on a line 
-void LCD_5110::clear_area(uint8_t line, uint8_t startX, uint8_t endX) {
+void LCD_5110::clear_area(unsigned char line, unsigned char startX, unsigned char endX)
+{  
     // Start and end positions of line
     int start = line * LCD_WIDTH + startX;
     int end = line * LCD_WIDTH + endX;
@@ -232,107 +235,152 @@ void LCD_5110::clear_area(uint8_t line, uint8_t startX, uint8_t endX) {
 	base_addr(start);
     
     // Clear all data in range from cache
-    for(uint16_t i = start; i < end; i++) send(0, LCD_DATA);
+    for(unsigned int i = start; i < end; i++) send(0, LCD_DATA);
 }
 
 // Clears an entire text block. (rows of 8 pixels on the lcd) 
-void LCD_5110::clear_line(uint8_t line) {
+void LCD_5110::clear_line(unsigned char line)
+{
     clear_area(line, 0, LCD_WIDTH);
 }
 
 // Sets cursor location to xy location corresponding to basic font size 
-void LCD_5110::goto_xy(uint8_t x, uint8_t y) {
+void LCD_5110::goto_xy(unsigned char x, unsigned char y)
+{
     lcdCacheIdx = x*CHAR_WIDTH + y * LCD_WIDTH;
 }
 
 // Sets cursor location to exact xy pixel location on the lcd 
-void LCD_5110::goto_xy_exact(uint8_t x, uint8_t y) {
+void LCD_5110::goto_xy_exact(unsigned char x, unsigned char y)
+{
     lcdCacheIdx = x + y * LCD_WIDTH;
 }
 
-// Sends data to display controller : a line of 8 pixels, as defined by data
-void LCD_5110::send(uint8_t byte, Type cd) {
-	// Enable display controller (active low)
-	*m_ce = 0;
-    // Either command or data
-    *m_dc =  (cd == LCD_DATA);
-	for(uint8_t i=0;i<8;i++) {
-		// Set the DATA pin value:8 bits in a row
-		*m_data = (byte >> (7-i)) & 0x01;
-		// Toggle the clock after each data bit
-		*m_clk = 1;
-		*m_clk = 0;
-	}
-	// Disable display controller
-	*m_ce = 1;
-}
-
 // Displays a character at current cursor location or moves to new line if enter char is given
-void LCD_5110::send(char chr) {
+void LCD_5110::send_chr(char chr)
+{
 	if (chr == '\n') {
 		// move to next line and first column
 		lcdCacheIdx = lcdCacheIdx + LCD_WIDTH - lcdCacheIdx % LCD_WIDTH; //next line and x=0
 	} else {
 		base_addr(lcdCacheIdx);
-
+	
 		// 5 pixel wide characters and add space
-		for(uint8_t i=0; i < CHAR_WIDTH - 1; i++)
+		for(unsigned char i=0; i < CHAR_WIDTH - 1; i++) 
 			send(pgm_read_byte(&font5x7[chr-32][i]) << 1, LCD_DATA);
-
+		
 		send(0, LCD_DATA); // right empty separator line of 8 vertical pixels
-
+	
 		lcdCacheIdx += CHAR_WIDTH;
-	}
+	}		
 }
+// Sends data to display controller : a line of 8 pixels, as defined by data
+void LCD_5110::send(unsigned char data, LcdCmdData cd)
+{
+	// Data/DC are outputs for the lcd (all low)
+	//LCD_DDR |= LCD_DATA_PIN | LCD_DC_PIN;
+	set(Port2DDR(m_port_DATA), m_dq_DATA, 1);
+	set(Port2DDR(m_port_DC), m_dq_DC, 1);
+	
+    // Enable display controller (active low)
+    set(m_port_SCE, m_dq_SCE, 0);//LCD_PORT &= ~LCD_SCE_PIN;
+
+    // Either command or data
+    /*if(cd == LCD_DATA) {
+		
+        LCD_PORT |= LCD_DC_PIN;
+    } else {
+        LCD_PORT &= ~LCD_DC_PIN;
+    }*/
+	set(m_port_DC, m_dq_DC, (cd == LCD_DATA));
+	
+	for(unsigned char i=0;i<8;i++) {
+		// Set the DATA pin value:8 bits in a row
+		/*if((data>>(7-i)) & 0x01) {
+			LCD_PORT |= LCD_DATA_PIN; //lcd pin high
+		} else {
+			LCD_PORT &= ~LCD_DATA_PIN; //lcd pin low
+		}*/
+		set(m_port_DATA, m_dq_DATA, ((data>>(7-i)) & 0x01));
+		// Toggle the clock
+		
+		set(m_port_CLK, m_dq_CLK, 1);//LCD_PORT |= LCD_CLK_PIN;
+		set(m_port_CLK, m_dq_CLK, 0);//LCD_PORT &= ~LCD_CLK_PIN;
+	}
+
+	// Disable display controller
+    set(m_port_SCE, m_dq_SCE, 1);//LCD_PORT |= LCD_SCE_PIN;
+	
+	// Data/DC can be used as button inputs when not sending to LCD (/w pullups)
+	//LCD_DDR &= ~(LCD_DATA_PIN | LCD_DC_PIN);
+	set(Port2DDR(m_port_DATA), m_dq_DATA, 0);
+	set(Port2DDR(m_port_DC), m_dq_DC, 0);
+	//LCD_PORT |= LCD_DATA_PIN | LCD_DC_PIN;
+	set(m_port_DATA, m_dq_DATA, 1);
+	set(m_port_DC, m_dq_DC, 1);
+}
+
 
 // Displays null terminated string at current cursor location and increment cursor location 
-void LCD_5110::send(char *str) {
-    while(*str)  send(*str++);
-}
-
-void LCD_5110::send(const char *str) {
-    while(pgm_read_byte(str)) send(pgm_read_byte(str++));
+void LCD_5110::send_string(char *str)
+{
+    while(*str)  send_chr(*str++);
 }
 
 // displays a formated string, similar to printf
-void LCD_5110::send(char *buffer, uint16_t len, const char *szFormat, ...) {
+void LCD_5110::send_format_string(const char *szFormat, ...)
+{
+	char szBuffer[100]; //in this buffer we form the message
+	int NUMCHARS = sizeof(szBuffer) / sizeof(szBuffer[0]);
+	int LASTCHAR = NUMCHARS - 1;
 	va_list pArgs;
 	va_start(pArgs, szFormat);
-	vsnprintf_P(buffer, len, szFormat, pArgs);
+	vsnprintf(szBuffer, NUMCHARS - 1, szFormat, pArgs);
 	va_end(pArgs);
-	send(buffer);
+	
+	send_string(szBuffer);
 }
 
 // Set the base address of the lcd
-void LCD_5110::base_addr(uint16_t addr) {
+void LCD_5110::base_addr(unsigned int addr) {
 	send(LCD_SETXADDR |(addr % LCD_WIDTH), LCD_CMD);
 	send(LCD_SETYADDR |(addr / LCD_WIDTH), LCD_CMD);
 }
 
 
 
-void LCD_5110::col(char chr) {
+void LCD_5110::col(char chr)
+{
 	base_addr(lcdCacheIdx);
+    
 	send(chr, LCD_DATA);
+	
 	lcdCacheIdx++;
 }
 
 // It goes back the cursor on LCD for a single step
-void LCD_5110::pixelBack(void)  {
+void LCD_5110::pixelBack(void) 
+{
 	lcdCacheIdx--;
 }
 
 // Prints on LCD a hex based picture, A hex picture can be produced from the "LCDAssistant.exe" windows based software.  
-void LCD_5110::printPictureOnLCD ( const uint8_t *data) {
-	uint16_t pixel_cols = LCD_WIDTH * (LCD_HEIGHT / CHAR_HEIGHT); //<6> means 6 lines on LCD.
+void LCD_5110::printPictureOnLCD ( const unsigned char *data)
+{
+	int pixel_cols = LCD_WIDTH * (LCD_HEIGHT / CHAR_HEIGHT); //<6> means 6 lines on LCD.
  	goto_xy(0, 0);
-	for(int i=0;i<pixel_cols;i++) col(pgm_read_byte(data++));
+	 
+	for(int i=0;i<pixel_cols;i++)
+		col(pgm_read_byte(data++));
+		
+	//_delay_ms(100);
 }
 
   
 // the most basic function, set a single pixel
-void LCD_5110::drawPixel(uint8_t  x, uint8_t  y, int color) {
-	uint16_t pixel_addr = x + y/CHAR_HEIGHT * LCD_WIDTH;
+void LCD_5110::drawPixel(unsigned char  x, unsigned char  y, int color) {
+	int pixel_addr = x + y/CHAR_HEIGHT * LCD_WIDTH;
+	
 	send(LCD_SETXADDR |(pixel_addr % LCD_WIDTH), LCD_CMD);
 	send(LCD_SETYADDR |(pixel_addr / LCD_WIDTH), LCD_CMD);
 	if (color)
@@ -341,6 +389,3 @@ void LCD_5110::drawPixel(uint8_t  x, uint8_t  y, int color) {
 		send(0, LCD_DATA); //"remove black pixel"
 }
 
-void LCD_5110::setBacklight(bool mode) {
-	*m_backlight = mode;
-}

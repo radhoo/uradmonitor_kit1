@@ -1,6 +1,7 @@
 # uradmonitor_kit1
-An open source DIY Geiger Counter Kit that can be used to push data to the uRADMonitor network or as a portable digital Dosimeter.
+A hackable open source DIY Geiger Counter Kit 
+with a network interface to the uRADMonitor servers
 
-Project page: http://www.pocketmagic.net/diy-dosimeter-geiger-counter-kit
+Project page: http://www.uradmonitor.com/open-source-uradmonitor-kit1/
 
 See the wiki for more details.

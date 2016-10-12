@@ -1,19 +1,39 @@
-/*
- * Nokia 3110 / 5110 unbuffered driver
- * (C)2013 Radu Motisan
- * www.pocketmagic.net
- * Based on a work by Tony Myatt - 2007
+/**
+ *	File:       	5110.h
+ *	Version:  		1.0
+ *	Date:       	2013
+ *	License:		GPL v3
+ *	Description:	unbuffered driver for Nokia 3110 / 5110 LCD
+ *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
+ *  
+ *	Copyright 2007 by Tony Myatt
+ *	Copyright 2013 by Radu Motisan, radu.motisan@gmail.com
+ *	Copyright 2016 by Magnasci SRL, www.magnasci.com
+ *  
+ *	This program is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ * 	(at your option) any later version.
+ *
+ *	This program is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * 	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #pragma once
 
-#include "../timeout.h"
+#include <util/delay.h>
+#include "../gpio/DigitalPin.h"
 
 // define  Lcd screen size 
-#define LCD_WIDTH 84
-#define LCD_HEIGHT 48
-#define CHAR_WIDTH 6
-#define CHAR_HEIGHT 8
+#define LCD_WIDTH 				84
+#define LCD_HEIGHT 				48
+#define CHAR_WIDTH 				6
+#define CHAR_HEIGHT 			8
 
 #define LCD_SETXADDR			0x80
 #define LCD_SETYADDR			0x40
@@ -26,43 +46,32 @@
 
 
 class LCD_5110 {
-	/* Command type sent to the lcd */
-	typedef enum { LCD_CMD  = 0, LCD_DATA = 1 } LcdCmdData;
-	
-	uint8_t  m_dq_SCE, m_dq_RST, m_dq_DC, m_dq_DATA, m_dq_CLK;
-	volatile uint8_t  *m_port_SCE, *m_port_RST, *m_port_DC, *m_port_DATA, *m_port_CLK;
-	
-	int lcdCacheIdx;
+	enum Type { LCD_CMD  = 0, LCD_DATA = 1 };
 
-	volatile uint8_t* Port2DDR(volatile uint8_t *port) {
-		return port - 1;
-	}
+	uint16_t lcdCacheIdx;
+
+	DigitalPin *m_rst, *m_ce, *m_dc, *m_data, *m_clk, *m_backlight;
 	
-
-
 public:
-	void init(
-		volatile uint8_t  *port_RST, uint8_t  dq_RST,
-		volatile uint8_t  *port_SCE, uint8_t  dq_SCE,
-		volatile uint8_t  *port_DC, uint8_t  dq_DC,
-		volatile uint8_t  *port_DATA, uint8_t  dq_DATA,
-		volatile uint8_t  *port_CLK, uint8_t  dq_CLK
-	);
-	void contrast(unsigned char contrast);
+	LCD_5110(DigitalPin *rst, DigitalPin *ce, DigitalPin *dc, DigitalPin *data, DigitalPin *clk, DigitalPin *backlight);
+	void init();
+	void contrast(uint8_t contrast);
 	void clear(void);
-	void clear_area(unsigned char line, unsigned char startX, unsigned char endX);
-	void clear_line(unsigned char line);
-	void goto_xy(unsigned char x, unsigned char y);
-	void goto_xy_exact(unsigned char x, unsigned char y);
-	void send_chr(char chr);
-	void send_string(char* str);
-	void send_format_string(const char *szFormat, ...);
-	void send(unsigned char data, LcdCmdData cd);
-	void base_addr(unsigned int addr) ;
+	void clear_area(uint8_t line, uint8_t startX, uint8_t endX);
+	void clear_line(uint8_t line);
+	void goto_xy(uint8_t x, uint8_t y);
+	void goto_xy_exact(uint8_t x, uint8_t y);
+	void send(char chr);
+	void send(char* str);
+	void send(const char* str);
+	void send(char *buffer, uint16_t len, const char *szFormat, ...);
+	void send(uint8_t byte, Type cd);
+	void base_addr(uint16_t addr) ;
 	void col(char chr);
 	void pixelBack(void);
-	void printPictureOnLCD ( const unsigned char *data);
-	void drawPixel(unsigned char  x, unsigned char  y, int color);
+	void printPictureOnLCD ( const uint8_t *data);
+	void drawPixel(uint8_t  x, uint8_t  y, int color);
+	void setBacklight(bool mode);
 };
 
 
