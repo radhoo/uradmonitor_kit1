@@ -27,7 +27,7 @@
 
 // USER CONFIGURATION SPACE
 // additional sensors sample
-#define USE_BME280_SENSOR
+// #define USE_BME280_SENSOR
 
 #define USE_ETHERNET
 
