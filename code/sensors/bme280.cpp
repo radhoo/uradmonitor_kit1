@@ -23,7 +23,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BME280.h"
+#include "bme280.h"
 
 
 uint8_t BME280::uread8(uint8_t reg) {
