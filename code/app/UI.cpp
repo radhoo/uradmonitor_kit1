@@ -99,7 +99,7 @@ UI::UI(LCD_5110 *lcd, DigitalPin *speaker, DigitalPin *button, Data *data, char 
 					"%c%c%c%c%c%c%c%c%c%c%c%c%c%c"
 #endif
 
-					"%c %.2f %c%s %c"
+					"%c %5.2f %c%s%c"
 					"%c%c%s%c%c"
 					"%3dV %02d%% %03d%c%c"),
 				// line 1: time, state symbols and battery
