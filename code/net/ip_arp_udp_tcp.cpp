@@ -2,7 +2,7 @@
  * vim:sw=8:ts=8:si:et
  * To use the above modeline in vim you must have "set modeline" in your .vimrc
  *
- * Author: Guido Socher 
+ * Author: Guido Socher
  * Copyright:LGPL V2
  * See http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html
  *
@@ -40,7 +40,7 @@ static void (*icmp_callback)(uint8_t *ip);
 #define ARP_MAC_resolver_client 1
 #define ALL_clients 1
 #endif
-#if defined (WWW_client) || defined (TCP_client) 
+#if defined (WWW_client) || defined (TCP_client)
 // just lower byte, the upper byte is TCPCLIENT_SRC_PORT_H:
 static uint8_t tcpclient_src_port_l = 1;
 static uint8_t tcp_fd = 0; // a file descriptor, will be encoded into the port
@@ -115,7 +115,7 @@ const char ntpreqhdr[] PROGMEM = {0xe3,0,4,0xfa,0,1,0,0,0,1};
 // the calculation.
 // len for ip is 20.
 //
-// For UDP/TCP we do not make up the required pseudo header. Instead we 
+// For UDP/TCP we do not make up the required pseudo header. Instead we
 // use the ip.src and ip.dst fields of the real packet:
 // The udp checksum calculation starts with the ip.src field
 // Ip.src=4bytes,Ip.dst=4 bytes,Udp header=8bytes + data length=16+len
@@ -387,7 +387,7 @@ void make_echo_reply_from_request(uint8_t *buf, uint16_t len) {
 	enc28j60PacketSend(len, buf);
 }
 
-// do some basic length calculations 
+// do some basic length calculations
 uint16_t get_tcp_data_len(uint8_t *buf) {
 	int16_t i;
 	i = (((int16_t) buf[IP_TOTLEN_H_P]) << 8) | (buf[IP_TOTLEN_L_P] & 0xff);
@@ -436,7 +436,7 @@ uint16_t fill_tcp_data(uint8_t *buf, uint16_t pos, const char *s) {
 }
 
 // Make just an ack packet with no tcp data inside
-// This will modify the eth/ip/tcp header 
+// This will modify the eth/ip/tcp header
 void make_tcp_ack_from_any(uint8_t *buf, int16_t datlentoack,
 		uint8_t addflags) {
 	uint16_t j;
@@ -614,7 +614,7 @@ void make_tcp_synack_from_syn(uint8_t *buf) {
 
 // you must have initialized info_data_len at some time before calling this function
 //
-// This info_data_len initialisation is done automatically if you call 
+// This info_data_len initialisation is done automatically if you call
 // packetloop_icmp_tcp(buf,enc28j60PacketReceive(BUFFER_SIZE, buf));
 // and test the return value for non zero.
 //
@@ -643,10 +643,10 @@ void fill_buf_p(uint8_t *buf, uint16_t len, const char *progmem_str_p) {
 		len--;
 	}
 }
-#endif 
+#endif
 
 #ifdef PING_client
-// icmp echo, matchpat is a pattern that has to be sent back by the 
+// icmp echo, matchpat is a pattern that has to be sent back by the
 // host answering the ping.
 // The ping is sent to destip  and mac dstmac
 void client_icmp_request(uint8_t *buf,uint8_t *destip,uint8_t *dstmac)
@@ -767,9 +767,9 @@ uint8_t client_ntp_process_answer(uint8_t *buf,uint32_t *time,uint8_t dstport_l)
 #endif
 
 #ifdef UDP_client
-// -------------------- send a spontanious UDP packet to a server 
+// -------------------- send a spontanious UDP packet to a server
 // There are two ways of using this:
-// 1) you call send_udp_prepare, you fill the data yourself into buf starting at buf[UDP_DATA_P], 
+// 1) you call send_udp_prepare, you fill the data yourself into buf starting at buf[UDP_DATA_P],
 // you send the packet by calling send_udp_transmit
 //
 // 2) You just allocate a large enough buffer for you data and you call send_udp and nothing else
@@ -960,8 +960,8 @@ uint8_t gratutious_arp(uint8_t *buf)
 #endif // GRATARP
 #if ARP_MAC_resolver_client
 // make a arp request
-// Note: you must have initialized the stack with 
-// init_udp_or_www_server or client_ifconfig 
+// Note: you must have initialized the stack with
+// init_udp_or_www_server or client_ifconfig
 // before you can use this function
 void client_arp_whohas(uint8_t *buf, uint8_t *ip_we_search) {
 	uint8_t i = 0;
@@ -1002,8 +1002,8 @@ uint8_t get_mac_with_arp_wait(void) {
 
 // reference_number is something that is just returned in the callback
 // to make matching and waiting for a given ip/mac address pair easier
-// Note: you must have initialized the stack with 
-// init_udp_or_www_server or client_ifconfig 
+// Note: you must have initialized the stack with
+// init_udp_or_www_server or client_ifconfig
 // before you can use this function
 void get_mac_with_arp(uint8_t *ip, uint8_t reference_number,
 		void (*arp_result_callback)(uint8_t *ip, uint8_t reference_number,
@@ -1017,7 +1017,7 @@ void get_mac_with_arp(uint8_t *ip, uint8_t reference_number,
 		i++;
 	}
 }
-#endif 
+#endif
 
 #if defined (TCP_client)
 // Make a tcp syn packet
@@ -1088,7 +1088,7 @@ void tcp_client_syn(uint8_t *buf, uint8_t srcport, uint16_t dstport) {
 			IP_HEADER_LEN + TCP_HEADER_LEN_PLAIN + ETH_HEADER_LEN + 4, buf);
 }
 #endif // TCP_client
-#if defined (TCP_client) 
+#if defined (TCP_client)
 // This is how to use the tcp client:
 //
 // Declare a callback function to get the result (tcp data from the server):
@@ -1104,16 +1104,16 @@ void tcp_client_syn(uint8_t *buf, uint8_t srcport, uint16_t dstport) {
 // output such that this will be the only packet.
 //
 // close_tcp_session=1 means close the session now. close_tcp_session=0
-// read all data and leave it to the other side to close it. 
+// read all data and leave it to the other side to close it.
 // If you connect to a web server then you want close_tcp_session=0.
 // If you connect to a modbus/tcp equipment then you want close_tcp_session=1
 //
-// Declare a callback function to be called in order to fill in the 
+// Declare a callback function to be called in order to fill in the
 //
 // request (tcp data sent to the server):
 // uint16_t your_client_tcp_datafill_callback(uint8_t fd){...your code;return(len_of_data_filled_in);}
 //
-// Now call: 
+// Now call:
 // fd=client_tcp_req(&your_client_tcp_result_callback,&your_client_tcp_datafill_callback,portnumber);
 //
 // fd is a file descriptor like number that you get back in the fill and result
@@ -1157,7 +1157,7 @@ uint8_t client_tcp_req(
 	return (tcp_fd);
 }
 #endif //  TCP_client
-#if defined (WWW_client) 
+#if defined (WWW_client)
 uint16_t www_client_internal_datafill_callback(uint8_t fd) {
 	char strbuf[5];
 	uint16_t len = 0;
@@ -1268,7 +1268,7 @@ void client_browse_url(const char *urlbuf_p, char *urlbuf_varpart,
 // additionalheaderline_p must be set to NULL if not used.
 // The string buffers to which urlbuf_varpart and hoststr are pointing
 // must not be changed until the callback is executed.
-// postval is a string buffer which can only be de-allocated by the caller 
+// postval is a string buffer which can only be de-allocated by the caller
 // when the post operation was really done (e.g when callback was executed).
 // postval must be urlencoded.
 void client_http_post(const char *urlbuf_p, char *urlbuf_varpart,
@@ -1307,7 +1307,7 @@ uint8_t packetloop_icmp_checkreply(uint8_t *buf,uint8_t *ip_monitoredhost)
 	return(0);
 }
 #endif // PING_client
-// return 0 to just continue in the packet loop and return the position 
+// return 0 to just continue in the packet loop and return the position
 // of the tcp data if there is tcp data part
 uint16_t packetloop_arp_icmp_tcp(uint8_t *buf, uint16_t plen) {
 	uint16_t len;

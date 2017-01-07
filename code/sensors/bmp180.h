@@ -66,10 +66,10 @@
 #define BMP180_UNITMOFFSET 0 //define a unit offset (m)
 
 class BMP180 {
-	
+
 	int16_t ac1, ac2, ac3, b1, b2, mb, mc, md;
 	uint16_t ac4, ac5, ac6;
-	
+
 	void getcalibration();
 	int32_t readRawTemperature(void);
 	uint32_t readRawPressure(int32_t rawtemperature );

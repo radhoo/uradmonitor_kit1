@@ -5,11 +5,11 @@
  *	License:		GPL v3
  *	Description:	unbuffered driver for Nokia 3110 / 5110 LCD
  *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *  
+ *
  *	Copyright 2007 by Tony Myatt
  *	Copyright 2013 by Radu Motisan, radu.motisan@gmail.com
  *	Copyright 2016 by Magnasci SRL, www.magnasci.com
- *  
+ *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation, either version 3 of the License, or
@@ -33,7 +33,7 @@
 // Alphabet lookup font
 // we are actually using 6x8 pixels, but the last are for border
 // this means in 84x48 we have 14x6 characters
-// the list is ordonated by the ASCII codes 
+// the list is ordonated by the ASCII codes
 const uint8_t PROGMEM font5x7 [][CHAR_WIDTH - 1] = {
 	{ 0x00, 0x00, 0x00, 0x00, 0x00 },   // sp
     { 0x00, 0x00, 0x2f, 0x00, 0x00 },   // !
@@ -129,7 +129,7 @@ const uint8_t PROGMEM font5x7 [][CHAR_WIDTH - 1] = {
     { 0x00, 0x7F, 0x3E, 0x1C, 0x08 },   // > Filled {
 	{ 0x08, 0x1C, 0x3E, 0x7F, 0x00 }, 	 // < Filled |
 	{ 0x08, 0x7C, 0x7E, 0x7C, 0x08 },   // Arrow up }
-	{ 0x10, 0x3E, 0x7E, 0x3E, 0x10 },   // Arrow down ~	
+	{ 0x10, 0x3E, 0x7E, 0x3E, 0x10 },   // Arrow down ~
 	{ 0x3E, 0x3E, 0x3E, 0x3E, 0x3E },   // Stop 0x7F
 	{ 0x00, 0x7F, 0x3E, 0x1C, 0x08 },   // Play 0x80
 	/*{ 0x7F, 0x7F, 0x7F, 0x7F, 0x7F },	// bat 1 0x81
@@ -180,10 +180,10 @@ LCD_5110::LCD_5110(DigitalPin *rst, DigitalPin *ce, DigitalPin *dc, DigitalPin *
 void LCD_5110::init() {
 	// Pull-up on reset pin
 	*m_rst = 1;
-	
+
 	// Wait after VCC high for reset (max 30ms)
     _delay_ms(15);
-    
+
     // Toggle display reset pin
     *m_rst = 0;
     _delay_ms(64);
@@ -192,17 +192,17 @@ void LCD_5110::init() {
     // Disable LCD controller
     *m_ce = 0;
 
-    send(LCD_EXTENDED_COMMANDS, LCD_CMD);  
-    send(LCD_VOP, LCD_CMD);  
-    send(LCD_TEMP, LCD_CMD);  
-    send(LCD_BIAS_MODE, LCD_CMD);  
-    send(LCD_HOR_ADDRESSING, LCD_CMD);  
-    send(LCD_NORMAL_MODE, LCD_CMD);  
-    
+    send(LCD_EXTENDED_COMMANDS, LCD_CMD);
+    send(LCD_VOP, LCD_CMD);
+    send(LCD_TEMP, LCD_CMD);
+    send(LCD_BIAS_MODE, LCD_CMD);
+    send(LCD_HOR_ADDRESSING, LCD_CMD);
+    send(LCD_NORMAL_MODE, LCD_CMD);
+
     // Clear lcd
     clear();
 
-	// Set display contrast. Note: No change is visible at ambient temperature 
+	// Set display contrast. Note: No change is visible at ambient temperature
 	int contrast = 0x40;
 	send(LCD_EXTENDED_COMMANDS, LCD_CMD);	// LCD Extended Commands
 	send(0x80 | contrast, LCD_CMD);			// Set LCD Vop(Contrast)
@@ -211,41 +211,41 @@ void LCD_5110::init() {
 
 
 
-// Clears the display 
+// Clears the display
 void LCD_5110::clear(void) {
 	lcdCacheIdx = 0;
 	base_addr(lcdCacheIdx);
 	// Set the entire cache to zero and write 0s to lcd
-	
+
 	int size =  ((LCD_WIDTH * LCD_HEIGHT) / CHAR_HEIGHT);
-	
+
     for(int i=0;i<size;i++)  send(0, LCD_DATA);
-    
+
 }
 
-// Clears an area on a line 
+// Clears an area on a line
 void LCD_5110::clear_area(uint8_t line, uint8_t startX, uint8_t endX) {
     // Start and end positions of line
     int start = line * LCD_WIDTH + startX;
     int end = line * LCD_WIDTH + endX;
-	
+
 	base_addr(start);
-    
+
     // Clear all data in range from cache
     for(uint16_t i = start; i < end; i++) send(0, LCD_DATA);
 }
 
-// Clears an entire text block. (rows of 8 pixels on the lcd) 
+// Clears an entire text block. (rows of 8 pixels on the lcd)
 void LCD_5110::clear_line(uint8_t line) {
     clear_area(line, 0, LCD_WIDTH);
 }
 
-// Sets cursor location to xy location corresponding to basic font size 
+// Sets cursor location to xy location corresponding to basic font size
 void LCD_5110::goto_xy(uint8_t x, uint8_t y) {
     lcdCacheIdx = x*CHAR_WIDTH + y * LCD_WIDTH;
 }
 
-// Sets cursor location to exact xy pixel location on the lcd 
+// Sets cursor location to exact xy pixel location on the lcd
 void LCD_5110::goto_xy_exact(uint8_t x, uint8_t y) {
     lcdCacheIdx = x + y * LCD_WIDTH;
 }
@@ -285,7 +285,7 @@ void LCD_5110::send(char chr) {
 	}
 }
 
-// Displays null terminated string at current cursor location and increment cursor location 
+// Displays null terminated string at current cursor location and increment cursor location
 void LCD_5110::send(char *str) {
     while(*str)  send(*str++);
 }
@@ -322,14 +322,14 @@ void LCD_5110::pixelBack(void)  {
 	lcdCacheIdx--;
 }
 
-// Prints on LCD a hex based picture, A hex picture can be produced from the "LCDAssistant.exe" windows based software.  
+// Prints on LCD a hex based picture, A hex picture can be produced from the "LCDAssistant.exe" windows based software.
 void LCD_5110::printPictureOnLCD ( const uint8_t *data) {
 	uint16_t pixel_cols = LCD_WIDTH * (LCD_HEIGHT / CHAR_HEIGHT); //<6> means 6 lines on LCD.
  	goto_xy(0, 0);
 	for(int i=0;i<pixel_cols;i++) col(pgm_read_byte(data++));
 }
 
-  
+
 // the most basic function, set a single pixel
 void LCD_5110::drawPixel(uint8_t  x, uint8_t  y, int color) {
 	uint16_t pixel_addr = x + y/CHAR_HEIGHT * LCD_WIDTH;

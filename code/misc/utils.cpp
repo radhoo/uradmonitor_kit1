@@ -5,10 +5,10 @@
  *	License:		GPL v3
  *	Description:	general purpose code for AVR microcontrollers
  *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *  
+ *
  *	Copyright 2013 by Radu Motisan, radu.motisan@gmail.com
  *	Copyright 2016 by Magnasci SRL, www.magnasci.com
- *  
+ *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation, either version 3 of the License, or

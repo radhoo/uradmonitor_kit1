@@ -5,11 +5,11 @@
  *	License:		GPL v3
  *	Description:	unbuffered driver for Nokia 3110 / 5110 LCD
  *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *  
+ *
  *	Copyright 2007 by Tony Myatt
  *	Copyright 2013 by Radu Motisan, radu.motisan@gmail.com
  *	Copyright 2016 by Magnasci SRL, www.magnasci.com
- *  
+ *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation, either version 3 of the License, or
@@ -29,7 +29,7 @@
 #include <util/delay.h>
 #include "../gpio/DigitalPin.h"
 
-// define  Lcd screen size 
+// define  Lcd screen size
 #define LCD_WIDTH 				84
 #define LCD_HEIGHT 				48
 #define CHAR_WIDTH 				6
@@ -51,7 +51,7 @@ class LCD_5110 {
 	uint16_t lcdCacheIdx;
 
 	DigitalPin *m_rst, *m_ce, *m_dc, *m_data, *m_clk, *m_backlight;
-	
+
 public:
 	LCD_5110(DigitalPin *rst, DigitalPin *ce, DigitalPin *dc, DigitalPin *data, DigitalPin *clk, DigitalPin *backlight);
 	void init();

@@ -41,7 +41,7 @@ void i2c_init(void) {
 }/* i2c_init */
 
 
-/*************************************************************************	
+/*************************************************************************
   Issues a start condition and sends address and transfer direction.
   return 0 = device accessible, 1= failed to access device
 *************************************************************************/
@@ -79,7 +79,7 @@ uint8_t i2c_start(uint8_t address) {
 /*************************************************************************
  Issues a start condition and sends address and transfer direction.
  If device is busy, use ack polling to wait until device is ready
- 
+
  Input:   address and transfer direction of I2C device
 *************************************************************************/
 /*void i2c_start_wait(uint8_t address) {
@@ -156,7 +156,7 @@ void i2c_stop(void) {
 /*************************************************************************
   Send one byte to I2C device
   Input:    byte to be transfered
-  Return:   0 write successful 
+  Return:   0 write successful
             1 write failed
 *************************************************************************/
 uint8_t i2c_write( uint8_t data ) {
@@ -175,7 +175,7 @@ uint8_t i2c_write( uint8_t data ) {
 
 
 /*************************************************************************
- Read one byte from the I2C device, request more data from device 
+ Read one byte from the I2C device, request more data from device
  Return:  byte read from I2C device
 *************************************************************************/
 uint8_t i2c_readAck(void) {
@@ -185,7 +185,7 @@ uint8_t i2c_readAck(void) {
 }
 
 /*************************************************************************
- Read one byte from the I2C device, read is followed by a stop condition 
+ Read one byte from the I2C device, read is followed by a stop condition
  Return:  byte read from I2C device
 *************************************************************************/
 uint8_t i2c_readNak(void) {

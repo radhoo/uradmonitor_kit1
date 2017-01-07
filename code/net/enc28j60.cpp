@@ -1,7 +1,7 @@
 /*********************************************
  * vim:sw=8:ts=8:si:et
  * To use the above modeline in vim you must have "set modeline" in your .vimrc
- * Author: Guido Socher 
+ * Author: Guido Socher
  * Copyright:LGPL V2
  * See http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html
  *

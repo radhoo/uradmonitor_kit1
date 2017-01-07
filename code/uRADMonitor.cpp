@@ -233,7 +233,7 @@ void early_run(void) {
 	// 2.CONFIGURE INTERRUPT INT0  to count pulses from Geiger Counter, connected on PIN PD2
 	EICRA |= _BV(ISC00) | _BV(ISC01);// Configure INT0 to trigger on RISING EDGE - Instead of MCUCR, you need to use EICRA. mega8:MCUCR , mega328p: EICR
 	EIMSK |= _BV(INT0); // Configure INT0 to fire interrupts - Instead of GICR, you need to use EIMSK mega8:GICR , mega328p: EIMSK
-	
+
 	// 3.CREATE Timer T0 to count seconds
 	time.init(callback_timeSecond, callback_timeMinute);
 	// start couting seconds for the partial CPM
@@ -435,4 +435,4 @@ void early_run(void) {
 	} // if network data.getStateNetwork() is ok
 
 	return (0);
-}  
+}

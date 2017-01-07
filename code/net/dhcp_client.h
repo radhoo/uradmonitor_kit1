@@ -1,7 +1,7 @@
 /*********************************************
  * vim:sw=8:ts=8:si:et
  * To use the above modeline in vim you must have "set modeline" in your .vimrc
- * Author: Guido Socher 
+ * Author: Guido Socher
  * Copyright:LGPL V2
  * See http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html
  *
@@ -14,7 +14,7 @@
 #ifndef DHCP_CLIENT_H
 #define DHCP_CLIENT_H 1
 
-// enc28j60EnableBroadcast/enc28j60DisableBroadcast is needed 
+// enc28j60EnableBroadcast/enc28j60DisableBroadcast is needed
 
 // Lease time renewal and time keeping.
 // you must call this function every 6 seconds (approx 6 sec it can be exact but does not have
@@ -28,7 +28,7 @@ extern void dhcp_6sec_tick(void);
 // and all boards reboot afterwards at the same time. At that moment they
 // must all have different TIDs otherwise there will be an IP address mess-up.
 //
-// The function returns 1 once we have a valid IP. 
+// The function returns 1 once we have a valid IP.
 // At this point you must not call the function again.
 extern uint8_t packetloop_dhcp_initial_ip_assignment(uint8_t *buf,
 		uint16_t plen, uint8_t initial_tid, char *hostname);

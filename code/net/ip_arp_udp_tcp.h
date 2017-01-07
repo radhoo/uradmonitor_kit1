@@ -1,7 +1,7 @@
 /*********************************************
  * vim:sw=8:ts=8:si:et
  * To use the above modeline in vim you must have "set modeline" in your .vimrc
- * Author: Guido Socher 
+ * Author: Guido Socher
  * Copyright:LGPL V2
  * See http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html
  *
@@ -37,7 +37,7 @@ extern void make_udp_reply_from_request_udpdat_ready(uint8_t *buf,uint16_t datal
 extern void make_udp_reply_from_request(uint8_t *buf,char *data,uint8_t datalen,uint16_t port);
 #endif
 extern uint8_t eth_type_is_ip_and_my_ip(uint8_t *buf,uint16_t len);
-// return 0 to just continue in the packet loop and return the position 
+// return 0 to just continue in the packet loop and return the position
 // of the tcp data if there is tcp data part:
 extern uint16_t packetloop_arp_icmp_tcp(uint8_t *buf,uint16_t plen);
 // functions to fill the web pages with data:
@@ -52,7 +52,7 @@ extern void client_ifconfig(uint8_t *ip,uint8_t *netmask);
 // route_via_gw can be used decide if a packed needs to be routed via GW or can be found on the LAN:
 extern uint8_t route_via_gw(uint8_t *destip); // returns 1 if destip must be routed via the GW. Returns 0 if destip is on the local LAN
 //
-// The get_mac_with_arp function can be used to find the MAC address of 
+// The get_mac_with_arp function can be used to find the MAC address of
 // a host that is directly connected to the same LAN. It translates the IP address into
 // a MAC address.
 // You need to provide a callback function. That function will be executed once the
@@ -70,12 +70,12 @@ extern uint8_t route_via_gw(uint8_t *destip); // returns 1 if destip must be rou
 //                while(i<6){gwmac[i]=mac[i];i++;}
 //        }
 //}
-// 
+//
 // and then you can just call get_mac_with_arp like this:
 //        get_mac_with_arp(gwip,TRANS_NUM_GWMAC,&arpresolver_result_callback);
 // Note: you must have initialized the stack with init_udp_or_www_server or client_ifconfig
 // before you can use get_mac_with_arp(). The arp request will automatically be repeated if
-// there is no answer. 
+// there is no answer.
 extern void get_mac_with_arp(uint8_t *ip, uint8_t reference_number,void (*arp_result_callback)(uint8_t *ip,uint8_t reference_number,uint8_t *mac));
 uint8_t get_mac_with_arp_wait(void); // checks current ongoing transaction, retuns 0 when the transaction is over
 #endif
@@ -101,16 +101,16 @@ uint8_t get_mac_with_arp_wait(void); // checks current ongoing transaction, retu
 // output such that this will be the only packet.
 //
 // close_tcp_session=1 means close the session now. close_tcp_session=0
-// read all data and leave it to the other side to close it. 
+// read all data and leave it to the other side to close it.
 // If you connect to a web server then you want close_tcp_session=0.
 // If you connect to a modbus/tcp equipment then you want close_tcp_session=1
 //
-// Declare a callback function to be called in order to fill in the 
+// Declare a callback function to be called in order to fill in the
 //
 // request (tcp data sent to the server):
 // uint16_t your_client_tcp_datafill_callback(uint8_t fd){...your code;return(len_of_data_filled_in);}
 //
-// Now call: 
+// Now call:
 // fd=client_tcp_req(&your_client_tcp_result_callback,&your_client_tcp_datafill_callback,portnumber);
 //
 // fd is a file descriptor like number that you get back in the fill and result
@@ -148,7 +148,7 @@ extern void client_browse_url(const char *urlbuf_p, char *urlbuf_varpart, const 
 // additionalheaderline must be set to NULL if not used.
 // The string buffers to which urlbuf_varpart and hoststr are pointing
 // must not be changed until the callback is executed.
-// postval is a string buffer which can only be de-allocated by the caller 
+// postval is a string buffer which can only be de-allocated by the caller
 // when the post operation was really done (e.g when callback was executed).
 // postval must be urlencoded.
 extern void client_http_post(const char *urlbuf_p, char *urlbuf_varpart,const char *hoststr, char *additionalheaderline,char *postval,void (*callback)(uint16_t,uint16_t,uint16_t),uint8_t *dstip,uint8_t *dstmac);
@@ -170,7 +170,7 @@ extern uint8_t client_ntp_process_answer(uint8_t *buf,uint32_t *time,uint8_t dst
 #ifdef UDP_client
 // There are two ways of using this UDP client:
 //
-// 1) you call send_udp_prepare, you fill the data yourself into buf starting at buf[UDP_DATA_P], 
+// 1) you call send_udp_prepare, you fill the data yourself into buf starting at buf[UDP_DATA_P],
 // you send the packet by calling send_udp_transmit
 //
 // 2) You just allocate a large enough buffer for you data and you call send_udp and nothing else
