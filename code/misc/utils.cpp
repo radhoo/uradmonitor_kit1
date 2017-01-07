@@ -108,7 +108,7 @@ uint16_t copyBytes(void *dst, uint16_t dst_offset, void *src, uint8_t src_bytes)
  * jsonKeyFind
  * finds a key and copies its value to the value output pointer
  */
-bool jsonKeyFind(char *response, char *key, char *value, uint8_t size) {
+bool jsonKeyFind(const char *response, const char *key, char *value, uint8_t size) {
 	char *s1 = strstr(response, key);
 	uint8_t len = strlen(key);
 	if (s1 && len) {

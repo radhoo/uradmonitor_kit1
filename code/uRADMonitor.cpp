@@ -174,18 +174,18 @@ void callback_browser(uint16_t webstatuscode, uint16_t datapos, uint16_t len) {
 			data.setStateBeep(Data::ENABLED);
 		else if (strstr_P(serverAnswer,PSTR("alarm")))
 			data.setStateAlarm(Data::ENABLED);
-		else if (jsonKeyFind(serverAnswer, "setid", value, 10)) {
+		else if (jsonKeyFind(serverAnswer, PSTR("setid"), value, 10)) {
 			eeprom_busy_wait();
 			eeprom_write_dword((uint32_t *) EEPROM_ADDR_DEVID, hex2int(value));
 			eeprom_busy_wait();
 			aux_softwarereset();
-		} else if (jsonKeyFind(serverAnswer, "sendint", value, 10)) {
+		} else if (jsonKeyFind(serverAnswer, PSTR("sendint"), value, 10)) {
 			data.setNetworkSendInterval(atoi(value));
 			eeprom_busy_wait();
 			eeprom_write_word((uint16_t *) EEPROM_ADDR_SENDINT, data.getNetworkSendInterval());
 			// set WDT reset interval against sendInterval
 			wd.wdt_setRebootSeconds(data.getNetworkSendInterval() + WARMUP + 180);
-		} else if (jsonKeyFind(serverAnswer, "morse", value, 10)) {
+		} else if (jsonKeyFind(serverAnswer, PSTR("morse"), value, 10)) {
 			morse.encode(value);
 		} else if (strstr_P(serverAnswer,PSTR("reset"))) {
 			aux_softwarereset();
@@ -347,16 +347,16 @@ void early_run(void) {
 					// when sending data, make sure you include the timestamp with each packet, or the server will reject your data
 					// see expProtocol.h for the possible sensors supported by the server
 #ifdef USE_BME280_SENSOR
-					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS"/%lu/"ID_VERSION_HW"/%u/"ID_VERSION_SW"/%u/"
-							ID_SBM20_CPM"/%lu/"ID_INVERTERVOLTAGE_VOLTS"/%u/"ID_INVERTERDUTY_PM"/%u/"
-							ID_TEMPERATURE_CELSIUS"/%.2f/"ID_PRESSURE_PASCALS"/%lu/"ID_HUMIDITY_RH"/%u"),
+					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS "/%lu/" ID_VERSION_HW "/%u/" ID_VERSION_SW "/%u/"
+							ID_SBM20_CPM "/%lu/" ID_INVERTERVOLTAGE_VOLTS "/%u/" ID_INVERTERDUTY_PM "/%u/"
+							ID_TEMPERATURE_CELSIUS "/%.2f/" ID_PRESSURE_PASCALS "/%lu/" ID_HUMIDITY_RH "/%u"),
 							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW,
 							data.getGeigerCPM(),data.getInverterVoltage(), data.getInverterDuty(),
 							data.getTemperature(), data.getPressure(), data.getHumidity()
 						);
 #else
-					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS"/%lu/"ID_VERSION_HW"/%u/"ID_VERSION_SW"/%u/"
-												ID_SBM20_CPM"/%lu/"ID_INVERTERVOLTAGE_VOLTS"/%u/"ID_INVERTERDUTY_PM"/%u"),
+					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS "/%lu/" ID_VERSION_HW "/%u/" ID_VERSION_SW "/%u/"
+												ID_SBM20_CPM "/%lu/" ID_INVERTERVOLTAGE_VOLTS "/%u/" ID_INVERTERDUTY_PM "/%u"),
 							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW,
 							data.getGeigerCPM(),data.getInverterVoltage(), data.getInverterDuty()
 						);

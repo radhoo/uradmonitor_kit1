@@ -5,10 +5,10 @@
  *	License:		GPL v3
  *	Description:	define Geiger tubes and conversion factors for CPM to equivalent dose
  *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *  
+ *
  *	Copyright 2013 by Radu Motisan, radu.motisan@gmail.com
  *	Copyright 2016 by Magnasci SRL, www.magnasci.com
- *  
+ *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation, either version 3 of the License, or
@@ -26,7 +26,7 @@
 #include "detectors.h"
 
 // not more than 10 chars!
-char *aux_detectorName(uint8_t param) {
+const char *aux_detectorName(uint8_t param) {
 	switch (param) {
 		case GEIGER_TUBE_SBM20: return "SBM20";
 		case GEIGER_TUBE_SI29BG:return "SI29BG";
