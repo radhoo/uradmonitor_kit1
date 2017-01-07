@@ -230,7 +230,7 @@ void UI::loop(bool *refresh) {
 	}
 
 	// turn backlight off when timeout is reached, only if alarm is off, because in alarm mode screen is flickering
-	if (!m_data->getStateAlarm() && m_data->getTimeCounter()->getCount(TimeCounter::TIME_COUNTER_2) > BACKLIGHT_TIMEOUT) {
+	if (BACKLIGHT_TIMEOUT > 0 && !m_data->getStateAlarm() && m_data->getTimeCounter()->getCount(TimeCounter::TIME_COUNTER_2) > BACKLIGHT_TIMEOUT) {
 		m_lcd->setBacklight(Data::DISABLED);
 	}
 
