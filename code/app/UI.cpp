@@ -91,7 +91,7 @@ UI::UI(LCD_5110 *lcd, DigitalPin *speaker, DigitalPin *button, Data *data, char 
 	 		m_lcd->send(m_buffer, m_size,
 				PSTR("%02d:%02d:%02d%c %c%s"
 #ifdef USE_BME280_SENSOR
-					"%05.1f %04lu %03u"
+					"%5.1f %04lu %3u"
 					"%c%cC%c%c%c%ch%c%c%cRH%c"
 
 #else
