@@ -28,6 +28,7 @@
 
 #include <util/delay.h>
 #include <string.h>
+#include <avr/pgmspace.h>
 
 
 // Reset the microcontroller
@@ -109,8 +110,8 @@ uint16_t copyBytes(void *dst, uint16_t dst_offset, void *src, uint8_t src_bytes)
  * finds a key and copies its value to the value output pointer
  */
 bool jsonKeyFind(const char *response, const char *key, char *value, uint8_t size) {
-	char *s1 = strstr(response, key);
-	uint8_t len = strlen(key);
+	char *s1 = strstr_P(response, key);
+	uint8_t len = strlen_P(key);
 	if (s1 && len) {
 		char *s2 = strstr(s1 + len + 3, "\"");
 		if (s2) {
