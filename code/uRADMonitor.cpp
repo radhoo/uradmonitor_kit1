@@ -389,7 +389,7 @@ void early_run(void) {
 				sprintf_P(buffer, PSTR("\"type\":\"%X\",\"detector\":\"%s\",\"cpm\":%lu,"),DEV_CLASS, aux_detectorName(GEIGER_TUBE), data.getGeigerCPM());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 #ifdef USE_BME280_SENSOR
-				sprintf_P(buffer, PSTR("\"temperature\":%.2f,\"pressure\":%lu,\"humidity\":%.2f,"), data.getTemperature(), data.getPressure(), data.getHumidity());
+				sprintf_P(buffer, PSTR("\"temperature\":%.2f,\"pressure\":%lu,\"humidity\":%u,"), data.getTemperature(), data.getPressure(), data.getHumidity());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 #endif
 				sprintf_P(buffer, PSTR("\"uptime\": %lu}}"), time.getTotalSec());
@@ -410,9 +410,8 @@ void early_run(void) {
 					sprintf_P(buffer, PSTR("Ready in %ds<br><br>"), WARMUP - time.getTotalSec());
 					dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 				} else {
-					sprintf_P(buffer, PSTR("temperature:%.2fC<br>pressure:%luPa<br>"), data.getTemperature(), data.getPressure());
+					sprintf_P(buffer, PSTR("temperature:%.2fC<br>pressure:%luPa<br>humidty:%uRH<br>"), data.getTemperature(), data.getPressure(), data.getHumidity());
 					dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
-					sprintf_P(buffer, PSTR("humidty:%.2fRH<br>"), data.getHumidity());
 				}
 #endif
 				sprintf_P(buffer, PSTR("voltage:%uV<br>duty:%u%%<br>frequency:%.2fkHz<br>"),data.getInverterVoltage(), data.getInverterDuty() /10, INVERTER_FREQUENCY / 1000.0);
