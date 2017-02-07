@@ -32,6 +32,7 @@
 #define ID_CO2_PPM "07"					// optional: carbon dioxide in ppm
 #define ID_CH2O_PPM "08"				// optional: formaldehyde in ppm
 #define ID_PM25_UGCM "09"				// optional: particulate matter in micro grams per cubic meter
+#define ID_TUBE_TYPE "10"				// optional: tube type
 #define ID_BATTERY_VOLTS "0A"			// optional: device battery voltage in volts
 #define ID_SBM20_CPM "0B"				// optional: radiation measured on SBM20 geiger tube in cpm
 #define ID_INVERTERVOLTAGE_VOLTS "0C"	// optional: high voltage geiger tube inverter voltage in volts

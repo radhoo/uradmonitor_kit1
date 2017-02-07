@@ -30,6 +30,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <avr/pgmspace.h>
 
 #include "app/UI.h"
 // local headers
@@ -347,17 +348,17 @@ void early_run(void) {
 					// when sending data, make sure you include the timestamp with each packet, or the server will reject your data
 					// see expProtocol.h for the possible sensors supported by the server
 #ifdef USE_BME280_SENSOR
-					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS "/%lu/" ID_VERSION_HW "/%u/" ID_VERSION_SW "/%u/"
-							ID_SBM20_CPM "/%lu/" ID_INVERTERVOLTAGE_VOLTS "/%u/" ID_INVERTERDUTY_PM "/%u/"
-							ID_TEMPERATURE_CELSIUS "/%.2f/" ID_PRESSURE_PASCALS "/%lu/" ID_HUMIDITY_RH "/%u"),
-							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW,
+					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS"/%lu/"ID_VERSION_HW"/%u/"ID_VERSION_SW"/%u/"ID_TUBE_TYPE"/%u/"
+							ID_SBM20_CPM"/%lu/"ID_INVERTERVOLTAGE_VOLTS"/%u/"ID_INVERTERDUTY_PM"/%u/"
+							ID_TEMPERATURE_CELSIUS"/%.2f/"ID_PRESSURE_PASCALS"/%lu/"ID_HUMIDITY_RH"/%u"),
+							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW, (uint8_t)GEIGER_TUBE,
 							data.getGeigerCPM(),data.getInverterVoltage(), data.getInverterDuty(),
 							data.getTemperature(), data.getPressure(), data.getHumidity()
 						);
 #else
-					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS "/%lu/" ID_VERSION_HW "/%u/" ID_VERSION_SW "/%u/"
-												ID_SBM20_CPM "/%lu/" ID_INVERTERVOLTAGE_VOLTS "/%u/" ID_INVERTERDUTY_PM "/%u"),
-							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW,
+					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS"/%lu/"ID_VERSION_HW"/%u/"ID_VERSION_SW"/%u/"ID_TUBE_TYPE"/%u/"
+							ID_SBM20_CPM"/%lu/"ID_INVERTERVOLTAGE_VOLTS"/%u/"ID_INVERTERDUTY_PM"/%u"),
+							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW, (uint8_t)GEIGER_TUBE,
 							data.getGeigerCPM(),data.getInverterVoltage(), data.getInverterDuty()
 						);
 
@@ -388,7 +389,7 @@ void early_run(void) {
 				sprintf_P(buffer, PSTR("\"type\":\"%X\",\"detector\":\"%s\",\"cpm\":%lu,"),DEV_CLASS, aux_detectorName(GEIGER_TUBE), data.getGeigerCPM());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 #ifdef USE_BME280_SENSOR
-				sprintf_P(buffer, PSTR("\"temperature\":%.2f,\"pressure\":%lu,\"humidity\":%.2f,"), data.getTemperature(), data.getPressure(), data.getHumidity());
+				sprintf_P(buffer, PSTR("\"temperature\":%.2f,\"pressure\":%lu,\"humidity\":%u,"), data.getTemperature(), data.getPressure(), data.getHumidity());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 #endif
 				sprintf_P(buffer, PSTR("\"uptime\": %lu}}"), time.getTotalSec());
@@ -409,9 +410,8 @@ void early_run(void) {
 					sprintf_P(buffer, PSTR("Ready in %ds<br><br>"), WARMUP - time.getTotalSec());
 					dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 				} else {
-					sprintf_P(buffer, PSTR("temperature:%.2fC<br>pressure:%luPa<br>"), data.getTemperature(), data.getPressure());
+					sprintf_P(buffer, PSTR("temperature:%.2fC<br>pressure:%luPa<br>humidty:%uRH<br>"), data.getTemperature(), data.getPressure(), data.getHumidity());
 					dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
-					sprintf_P(buffer, PSTR("humidty:%.2fRH<br>"), data.getHumidity());
 				}
 #endif
 				sprintf_P(buffer, PSTR("voltage:%uV<br>duty:%u%%<br>frequency:%.2fkHz<br>"),data.getInverterVoltage(), data.getInverterDuty() /10, INVERTER_FREQUENCY / 1000.0);
