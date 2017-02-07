@@ -348,16 +348,16 @@ void early_run(void) {
 					// when sending data, make sure you include the timestamp with each packet, or the server will reject your data
 					// see expProtocol.h for the possible sensors supported by the server
 #ifdef USE_BME280_SENSOR
-					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS"/%lu/"ID_VERSION_HW"/%u/"ID_VERSION_SW"/%u/"ID_TUBE_TYPE"/%u/"
-							ID_SBM20_CPM"/%lu/"ID_INVERTERVOLTAGE_VOLTS"/%u/"ID_INVERTERDUTY_PM"/%u/"
-							ID_TEMPERATURE_CELSIUS"/%.2f/"ID_PRESSURE_PASCALS"/%lu/"ID_HUMIDITY_RH"/%u"),
+					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS "/%lu/" ID_VERSION_HW "/%u/" ID_VERSION_SW "/%u/" ID_TUBE_TYPE "/%u/"
+							ID_SBM20_CPM "/%lu/" ID_INVERTERVOLTAGE_VOLTS "/%u/" ID_INVERTERDUTY_PM "/%u/"
+							ID_TEMPERATURE_CELSIUS "/%.2f/" ID_PRESSURE_PASCALS "/%lu/" ID_HUMIDITY_RH "/%u"),
 							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW, (uint8_t)GEIGER_TUBE,
 							data.getGeigerCPM(),data.getInverterVoltage(), data.getInverterDuty(),
 							data.getTemperature(), data.getPressure(), data.getHumidity()
 						);
 #else
-					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS"/%lu/"ID_VERSION_HW"/%u/"ID_VERSION_SW"/%u/"ID_TUBE_TYPE"/%u/"
-							ID_SBM20_CPM"/%lu/"ID_INVERTERVOLTAGE_VOLTS"/%u/"ID_INVERTERDUTY_PM"/%u"),
+					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS "/%lu/" ID_VERSION_HW "/%u/" ID_VERSION_SW "/%u/" ID_TUBE_TYPE "/%u/"
+							ID_SBM20_CPM "/%lu/" ID_INVERTERVOLTAGE_VOLTS "/%u/" ID_INVERTERDUTY_PM "/%u"),
 							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW, (uint8_t)GEIGER_TUBE,
 							data.getGeigerCPM(),data.getInverterVoltage(), data.getInverterDuty()
 						);
