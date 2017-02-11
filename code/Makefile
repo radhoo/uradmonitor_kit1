@@ -4,7 +4,7 @@ SOURCES = $(wildcard *.cpp) $(wildcard */*.cpp)
 OBJECTS = $(patsubst %.cpp,%.o,$(SOURCES))
 HEADERS = $(wildcard *.h)
 CC = avr-g++ -g -mmcu=atmega328p -D__AVR_ATmega328P__ -DF_CPU=8000000UL -Os -funsigned-char
-LINK = avr-g++ -g -mmcu=atmega328p -lprintf_flt -lm -Wl,-u,vfprintf -Wl,-relax
+LINK = $(CC) -lprintf_flt -lm -Wl,-u,vfprintf -Wl,-relax -Xlinker -Map=uradmonitor.map
 
 $(TARGET): $(TARGET_ELF)
 	avr-objcopy -j .text -j .data -O ihex $(TARGET_ELF) $(TARGET)
