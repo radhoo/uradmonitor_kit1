@@ -38,8 +38,8 @@ private:
     volatile uint8_t 	*m_pport;
     uint8_t				m_dq;
     uint8_t				mask1, mask0;
-    Type				m_type;
-    bool 				m_state;
+    Type				m_type : 1;
+    bool 				m_state : 1;
 
     // Get the other registers from the PORT
     #define PORT2DDR(x) (x - 1)

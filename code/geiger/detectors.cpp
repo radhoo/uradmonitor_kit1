@@ -24,20 +24,24 @@
  */
 
 #include "detectors.h"
+#include <avr/pgmspace.h>
 
-// not more than 10 chars!
+// not more than 8 chars!
 const char *aux_detectorName(uint8_t param) {
+	static char ret[8];
+	const char *val = 0;
 	switch (param) {
-		case GEIGER_TUBE_SBM20: return "SBM20";
-		case GEIGER_TUBE_SI29BG:return "SI29BG";
-		case GEIGER_TUBE_SBM19: return "SBM19";
-		case GEIGER_TUBE_STS5:  return " STS5";
-		case GEIGER_TUBE_SI22G: return "SI22G";
-		case GEIGER_TUBE_SI3BG: return "SI3BG";
-		case GEIGER_TUBE_SBM21: return "SBM21";
-		case GEIGER_TUBE_SI1G:  return " SI1G";
-		default: return "unknown";
+		case GEIGER_TUBE_SBM20: val = PSTR("SBM20"); break;
+		case GEIGER_TUBE_SI29BG:val = PSTR("SI29BG"); break;
+		case GEIGER_TUBE_SBM19: val = PSTR("SBM19"); break;
+		case GEIGER_TUBE_STS5:  val = PSTR(" STS5"); break;
+		case GEIGER_TUBE_SI22G: val = PSTR("SI22G"); break;
+		case GEIGER_TUBE_SI3BG: val = PSTR("SI3BG"); break;
+		case GEIGER_TUBE_SBM21: val = PSTR("SBM21"); break;
+		case GEIGER_TUBE_SI1G:  val = PSTR(" SI1G"); break;
+		default: val = PSTR("unknown"); break;
 	}
+	strncpy_P(ret, val, sizeof(ret));
 }
 
 uint8_t getDetector(uint8_t param) {

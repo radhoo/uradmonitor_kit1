@@ -24,6 +24,7 @@
  */
 
 #include "morse.h"
+#include <avr/pgmspace.h>
 
 void Morse::binary(uint8_t decimal) {
 	if (decimal) {
@@ -36,7 +37,7 @@ void Morse::encode(char c) {
 	if (c == ' ') {
 		end();end();end();end();end();end();end();
 	} else {
-		const char *latin = "**ETIANMSURWDKGOHVF*L*PJBXCYZQ**"; //32
+		const char *latin = PSTR("**ETIANMSURWDKGOHVF*L*PJBXCYZQ**"); //32
 		if (c >= 'a' && c <= 'z') c -= 32; // convert to uppercase
 		if (c < 'A' || c > 'Z') return;
 		uint8_t i = 0;

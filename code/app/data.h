@@ -43,13 +43,13 @@ class Data {
 	uint32_t 			deviceID;						// KIT1 unique identifier in the uRADMonitor network
 	TimeCounter			*m_time;						// clock
 	INVERTER			m_inverter;						// handles the PWM on Timer1 to drive the Geiger tube inverter
-	bool				stateSpeaker,					// if true the speaker is functional, if false the speaker is muted
-						stateNetwork,					// if true we have network up and running, if false we're offline
-						statePressed,					// true if button is pressed
-						stateAlarm,						// if true will trigger alarm
-						stateBeep,						// if true will trigger a beep
-						stateRead,						// if true will read sensors
-						stateSend;						// if true will trigger sending data online
+	bool				stateSpeaker : 1,					// if true the speaker is functional, if false the speaker is muted
+						stateNetwork : 1,					// if true we have network up and running, if false we're offline
+						statePressed : 1,					// true if button is pressed
+						stateAlarm : 1,						// if true will trigger alarm
+						stateBeep : 1,						// if true will trigger a beep
+						stateRead : 1,						// if true will read sensors
+						stateSend : 1;						// if true will trigger sending data online
 	uint8_t				ipLocal[4],						// network local IP4
 						ipRemote[4],					// network server IP4
 						ipGateway[4],					// network gateway IP4 in current LAN
