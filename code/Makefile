@@ -13,6 +13,7 @@ $(TARGET): $(TARGET_ELF)
 $(TARGET_ELF): .depend $(OBJECTS)
 	$(LINK) $(LFLAGS) -o $(TARGET_ELF) $(OBJECTS) $(LIBPATH) $(LIBS)
 #	$(STRIP) $(TARGET_ELF)
+	avr-size --mcu=atmega328p --format=avr $(TARGET_ELF)
 
 .cpp.o: $*.h common.h
 	$(CC) -c $(CFLAGS) $(DEBUGFLAGS) $(INCPATH) -o $@ $<
