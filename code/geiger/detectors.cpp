@@ -24,52 +24,8 @@
  */
 
 #include "detectors.h"
-#include <avr/pgmspace.h>
-
-// not more than 8 chars!
-const char *aux_detectorName(uint8_t param) {
-	static char ret[8];
-	const char *val = 0;
-	switch (param) {
-		case GEIGER_TUBE_SBM20: val = PSTR("SBM20"); break;
-		case GEIGER_TUBE_SI29BG:val = PSTR("SI29BG"); break;
-		case GEIGER_TUBE_SBM19: val = PSTR("SBM19"); break;
-		case GEIGER_TUBE_STS5:  val = PSTR(" STS5"); break;
-		case GEIGER_TUBE_SI22G: val = PSTR("SI22G"); break;
-		case GEIGER_TUBE_SI3BG: val = PSTR("SI3BG"); break;
-		case GEIGER_TUBE_SBM21: val = PSTR("SBM21"); break;
-		case GEIGER_TUBE_SI1G:  val = PSTR(" SI1G"); break;
-		default: val = PSTR("unknown"); break;
-	}
-	strncpy_P(ret, val, sizeof(ret));
-}
-
-uint8_t getDetector(uint8_t param) {
-	switch (param) {
-		case 0x11: return GEIGER_TUBE_SBM20;
-		case 0x12: return GEIGER_TUBE_SI29BG;
-		case 0x41: return GEIGER_TUBE_SBM20;
-		case 0x51: return GEIGER_TUBE_SBM20;
-		case 0x82: return GEIGER_TUBE_SI29BG;
-		default: return GEIGER_TUBE_UNKNOWN;
-	}
-}
-
-float aux_detectorFactor(uint8_t param) {
-	switch (param) {
-		case GEIGER_TUBE_SBM20: 	return 0.006315;
-		case GEIGER_TUBE_SI29BG: 	return 0.010000;
-		case GEIGER_TUBE_SBM19: 	return 0.001500;
-		case GEIGER_TUBE_STS5: 		return 0.006666;
-		case GEIGER_TUBE_SI22G: 	return 0.001714;
-		case GEIGER_TUBE_SI3BG: 	return 0.631578;
-		case GEIGER_TUBE_SBM21: 	return 0.048000;
-		case GEIGER_TUBE_SI1G:		return 0.006000;
-		default: 0;
-	}
-}
 
 // dose equivalent linear approximative conversion from CPM
 float aux_CPM2uSVh(uint8_t tube, uint32_t cpm) {
-	return aux_detectorFactor(tube) * cpm;
+	return DETECTOR_FACTOR * cpm;
 }

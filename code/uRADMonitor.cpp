@@ -386,7 +386,7 @@ void early_run(void) {
 				// create webserver page: pay attention to buffers used: buffer and ethBuffer as small in size!
 				sprintf_P(buffer, PSTR("{\"data\":{ \"id\":\"%08lX\","), data.getDeviceID());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
-				sprintf_P(buffer, PSTR("\"type\":\"%X\",\"detector\":\"%s\",\"cpm\":%lu,"),DEV_CLASS, aux_detectorName(GEIGER_TUBE), data.getGeigerCPM());
+				sprintf_P(buffer, PSTR("\"type\":\"%X\",\"detector\":\"" DETECTOR_NAME "\",\"cpm\":%lu,"), DEV_CLASS, data.getGeigerCPM());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 #ifdef USE_BME280_SENSOR
 				sprintf_P(buffer, PSTR("\"temperature\":%.2f,\"pressure\":%lu,\"humidity\":%u,"), data.getTemperature(), data.getPressure(), data.getHumidity());
@@ -401,7 +401,7 @@ void early_run(void) {
 				// create webserver page: pay attention to buffers used: buffer and ethBuffer as small in size!
 				sprintf_P(buffer, PSTR("<b>uRADMonitor %08lX</b><br>"), data.getDeviceID());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
-				sprintf_P(buffer, PSTR("type:%X hw:%u sw:%u %s<hr>"), DEV_CLASS, VER_HW, VER_SW, aux_detectorName(GEIGER_TUBE));
+				sprintf_P(buffer, PSTR("type:%X hw:%u sw:%u " DETECTOR_NAME "<hr>"), DEV_CLASS, VER_HW, VER_SW);
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 				sprintf_P(buffer, PSTR("radiation:%luCPM<br>"), data.getGeigerCPM());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));

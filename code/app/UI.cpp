@@ -131,7 +131,7 @@ UI::UI(LCD_5110 *lcd, DigitalPin *speaker, DigitalPin *button, Data *data, char 
 					"              " \
 					"              " \
 					"              " \
-					"%s tube %d"),
+					DETECTOR_NAME " tube %d"),
 	 			// line 1: id
 	 			m_data->getDeviceID(),
 				// line 2: time
@@ -143,7 +143,7 @@ UI::UI(LCD_5110 *lcd, DigitalPin *speaker, DigitalPin *button, Data *data, char 
 				// line 5: maximum CPM
 
 				// line 6: geiger tube and firmware version
-				aux_detectorName(GEIGER_TUBE), VER_SW);
+				VER_SW);
 			break;
 	 	 case UI_PAGE_NETWORK:
 	 		if (m_data->getStateNetwork() == Data::ENABLED) {
