@@ -1,7 +1,7 @@
 TARGET = Release/uradmonitor-KIT1-EXP.hex
 TARGET_ELF = $(patsubst %.hex,%.elf,$(TARGET))
-SOURCES = $(wildcard *.cpp) $(wildcard */*.cpp)
-OBJECTS = $(patsubst %.cpp,%.o,$(SOURCES))
+SOURCES = $(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*.c)
+OBJECTS = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
 HEADERS = $(wildcard *.h)
 CC = avr-g++ -g -mmcu=atmega328p -D__AVR_ATmega328P__ -DF_CPU=8000000UL -Os -funsigned-char -fdata-sections -ffunction-sections
 LINK = $(CC) -lprintf_flt -lm -Wl,--gc-sections -Wl,-u,vfprintf -Wl,-relax -Xlinker -Map=uradmonitor.map
@@ -15,7 +15,10 @@ $(TARGET_ELF): .depend $(OBJECTS)
 #	$(STRIP) $(TARGET_ELF)
 	avr-size --mcu=atmega328p --format=avr $(TARGET_ELF)
 
-.cpp.o: $*.h common.h
+.c.o: $*.h config.h
+	$(CC) -c $(CFLAGS) $(DEBUGFLAGS) $(INCPATH) -o $@ $<
+
+.cpp.o: $*.h config.h
 	$(CC) -c $(CFLAGS) $(DEBUGFLAGS) $(INCPATH) -o $@ $<
 
 .hex.elf:

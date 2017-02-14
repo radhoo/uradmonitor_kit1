@@ -28,6 +28,7 @@
 #include "../misc/utils.h"
 #include "../time/timecounter.h"
 #include "../geiger/inverter.h"
+#include "ringbuf.h"
 
 
 // By default, the KIT1 has only a Geiger counter tube
@@ -58,7 +59,7 @@ class Data {
 						macGateway[6],					// network gateway MAC address
 						stateDNS;
 
-	uint16_t 			batteryVoltage,					// voltage on battery in milivolts
+	uint16_t 			batteryVoltage,					// voltage on battery in millivolts
 						inverterVoltage,				// high voltage produced by the inverter in volts
 						inverterDuty,					// inverter driver signal duty cycle in percents per mille
 						networkPings,					// pings received
@@ -66,10 +67,13 @@ class Data {
 						networkPacketsTotal,				// packets failed to send
 						networkSendInterval,			// interval in seconds to send
 						networkHTTPCode;				// server returned HTTP code
+	uint16_t			geigerCPMHigh;					// observed max CPM
+	uint16_t			geigerCPMLow;					// observed min CPM
+	uint16_t			geigerIntervalCount;			// 5-second intervals which have elapsed
 	uint32_t			geigerCPM;						// radiation dose as CPM
+	RingBuf				geigerCPMHistory;				// recent history of geigerCPM
 
 	float				geigerDose;						// radiation dose approximated to equivalent dose based on geiger tube factor
-
 
 	// Add any new sensors here
 #ifdef USE_BME280_SENSOR
@@ -120,15 +124,20 @@ public:
 	void setStateDNS(uint8_t state);
 	uint8_t getStateDNS();
 
-	// access battery voltage in milivolts
+	// access battery voltage in millivolts
 	uint16_t getBatteryVoltage();
-	void setBatteryVoltage(uint16_t milivolts);
+	void setBatteryVoltage(uint16_t millivolts);
 
 	// geiger varios dose& stats access calls
 	float getGeigerDose();
 	void setGeigerDose(float dose);
 	uint32_t getGeigerCPM();
 	void setGeigerCPM(uint32_t cpm);
+	uint16_t getGeigerCPMHigh();
+	uint16_t getGeigerCPMLow();
+	uint16_t getGeigerCPMRecentAverage();
+	uint16_t getGeigerIntervalCount();
+	const RingBuf *getHistory();
 
 	// inverter access functions
 	uint16_t getInverterVoltage();

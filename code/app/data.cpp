@@ -23,6 +23,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "data.h"
+#include <limits.h>
 
 Data::Data(TimeCounter *time) {
 	m_time = time;
@@ -34,6 +35,9 @@ Data::Data(TimeCounter *time) {
 	stateSpeaker = DISABLED;
 	statePressed = DISABLED;
 	geigerCPM = 0;
+	geigerCPMHigh = 0;
+	geigerCPMLow = INT_MAX;
+	geigerIntervalCount = 0;
 	geigerDose = 0;
 	batteryVoltage = 0;
 	inverterVoltage = 0;
@@ -42,6 +46,7 @@ Data::Data(TimeCounter *time) {
 	networkPacketsTotal = 0;
 	networkPacketsOK = 0;
 	networkPings = 0;
+	rbInit(&geigerCPMHistory);
 }
 
 // return objects
@@ -78,15 +83,41 @@ void Data::setStateSend(bool state) { stateSend = state; }
 void Data::setStateDNS(uint8_t state) { stateDNS = state; }
 uint8_t Data::getStateDNS() { return stateDNS; }
 
-// access battery voltage in milivolts
+// access battery voltage in millivolts
 uint16_t Data::getBatteryVoltage() { return batteryVoltage; }
-void Data::setBatteryVoltage(uint16_t milivolts) { batteryVoltage = milivolts; }
+void Data::setBatteryVoltage(uint16_t millivolts) { batteryVoltage = millivolts; }
 
-// geiger varios dose& stats access calls
+// geiger various dose & stats access calls
 float Data::getGeigerDose() { return geigerDose; }
 void Data::setGeigerDose(float dose) { geigerDose = dose; }
 uint32_t Data::getGeigerCPM() { return geigerCPM; }
-void Data::setGeigerCPM(uint32_t cpm) { geigerCPM = cpm; }
+uint16_t Data::getGeigerCPMHigh() { return geigerCPMHigh; }
+uint16_t Data::getGeigerCPMLow() { return geigerCPMLow; }
+uint16_t Data::getGeigerIntervalCount() { return geigerIntervalCount; /* rbCount(&geigerCPMHistory); */ }
+uint16_t Data::getGeigerCPMRecentAverage() {
+	uint32_t sum = 0;
+	uint8_t count = MIN(AVERAGE_SAMPLES, rbCount(&geigerCPMHistory));
+	if (count == 0)
+		return 0;
+	for (uint8_t i = 0; i < count; ++i)
+		sum += rbRef(&geigerCPMHistory, i);
+	return (uint16_t)(sum / count);
+}
+void Data::setGeigerCPM(uint32_t cpm) { 
+	++geigerIntervalCount;
+	geigerCPM = cpm;
+	if (cpm > 0 && cpm < geigerCPMLow)
+		geigerCPMLow = (uint16_t)cpm;
+	if (cpm > geigerCPMHigh)
+		geigerCPMHigh = cpm;
+	RingBufEntry toStore = (uint16_t)cpm;
+	if (cpm > 16384)
+		toStore = 16384;
+	while (!rbAvailable(&geigerCPMHistory))
+		rbConsume(&geigerCPMHistory, 1);
+	rbLoadEntry(&geigerCPMHistory, toStore);
+}
+const RingBuf *Data::getHistory() { return &geigerCPMHistory; }
 
 // inverter access functions
 uint16_t Data::getInverterVoltage() { return inverterVoltage; }

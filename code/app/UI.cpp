@@ -127,21 +127,22 @@ UI::UI(LCD_5110 *lcd, DigitalPin *speaker, DigitalPin *button, Data *data, char 
 	 	 case UI_PAGE_STATS:
 	 		m_lcd->send(m_buffer, m_size, PSTR(
 					"KIT1  %08lX" \
-					"Time: %02d:%02d:%02d" \
-					"              " \
-					"              " \
-					"              " \
+					"%02d:%02d:%02d %5d" \
+					"Min CPM %6d" \
+					"Avg 60s %6d" \
+					"Max %10d" \
 					DETECTOR_NAME " tube %d"),
 	 			// line 1: id
 	 			m_data->getDeviceID(),
-				// line 2: time
+				// line 2: time and sample count
 				m_data->getTimeCounter()->getHour(), m_data->getTimeCounter()->getMin(), m_data->getTimeCounter()->getSec(),
-				// line 3: total pulses from power on
-
-				// line 4: absolute average CPM
-
-				// line 5: maximum CPM
-
+				m_data->getGeigerIntervalCount(),
+				// line 3: min CPM
+				m_data->getGeigerCPMLow(),
+				// line 4: CPM average
+				m_data->getGeigerCPMRecentAverage(),
+				// line 5: max CPM
+				m_data->getGeigerCPMHigh(),
 				// line 6: geiger tube and firmware version
 				VER_SW);
 			break;
