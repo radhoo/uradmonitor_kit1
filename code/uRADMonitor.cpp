@@ -392,7 +392,10 @@ void early_run(void) {
 				sprintf_P(buffer, PSTR("\"temperature\":%.2f,\"pressure\":%lu,\"humidity\":%u,"), data.getTemperature(), data.getPressure(), data.getHumidity());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 #endif
-				sprintf_P(buffer, PSTR("\"uptime\": %lu}}"), time.getTotalSec());
+				sprintf_P(buffer, PSTR("\"uptime\": %lu}"), time.getTotalSec());
+				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
+				sprintf_P(buffer, PSTR(",\"stats\": {\"cpmMin\":%u,\"cpmMax\":%u,\"cpmAverage\":%u,\"sampleCount\":%u}}"),
+					data.getGeigerCPMLow(), data.getGeigerCPMHigh(), data.getGeigerCPMRecentAverage(), data.getGeigerIntervalCount());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 			}
 			// server: serve mini webpage
