@@ -71,7 +71,7 @@ class Data {
 	uint16_t			geigerCPMLow;					// observed min CPM
 	uint16_t			geigerIntervalCount;			// 5-second intervals which have elapsed
 	uint32_t			geigerCPM;						// radiation dose as CPM
-	RingBuf				geigerCPMHistory;				// recent history of geigerCPM
+	RingBuf<uint16_t,AVERAGE_SAMPLES> geigerCPMHistory;	// recent history of geigerCPM
 
 	float				geigerDose;						// radiation dose approximated to equivalent dose based on geiger tube factor
 
@@ -137,7 +137,7 @@ public:
 	uint16_t getGeigerCPMLow();
 	uint16_t getGeigerCPMRecentAverage();
 	uint16_t getGeigerIntervalCount();
-	const RingBuf *getHistory();
+	const RingBuf<uint16_t,AVERAGE_SAMPLES> &getHistory();
 
 	// inverter access functions
 	uint16_t getInverterVoltage();
