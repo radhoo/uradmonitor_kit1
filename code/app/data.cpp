@@ -46,7 +46,6 @@ Data::Data(TimeCounter *time) {
 	networkPacketsTotal = 0;
 	networkPacketsOK = 0;
 	networkPings = 0;
-	rbInit(&geigerCPMHistory);
 }
 
 // return objects
@@ -93,14 +92,14 @@ void Data::setGeigerDose(float dose) { geigerDose = dose; }
 uint32_t Data::getGeigerCPM() { return geigerCPM; }
 uint16_t Data::getGeigerCPMHigh() { return geigerCPMHigh; }
 uint16_t Data::getGeigerCPMLow() { return geigerCPMLow; }
-uint16_t Data::getGeigerIntervalCount() { return geigerIntervalCount; /* rbCount(&geigerCPMHistory); */ }
+uint16_t Data::getGeigerIntervalCount() { return geigerIntervalCount; /* geigerCPMHistory.count(); */ }
 uint16_t Data::getGeigerCPMRecentAverage() {
 	uint32_t sum = 0;
-	uint8_t count = MIN(AVERAGE_SAMPLES, rbCount(&geigerCPMHistory));
+	uint8_t count = MIN(AVERAGE_SAMPLES, geigerCPMHistory.count());
 	if (count == 0)
 		return 0;
 	for (uint8_t i = 0; i < count; ++i)
-		sum += rbRef(&geigerCPMHistory, i);
+		sum += geigerCPMHistory.at(i);
 	return (uint16_t)(sum / count);
 }
 void Data::setGeigerCPM(uint32_t cpm) { 
@@ -110,14 +109,14 @@ void Data::setGeigerCPM(uint32_t cpm) {
 		geigerCPMLow = (uint16_t)cpm;
 	if (cpm > geigerCPMHigh)
 		geigerCPMHigh = cpm;
-	RingBufEntry toStore = (uint16_t)cpm;
+	uint16_t toStore = (uint16_t)cpm;
 	if (cpm > 16384)
 		toStore = 16384;
-	while (!rbAvailable(&geigerCPMHistory))
-		rbConsume(&geigerCPMHistory, 1);
-	rbLoadEntry(&geigerCPMHistory, toStore);
+	while (!geigerCPMHistory.available())
+		geigerCPMHistory.remove(1);
+	geigerCPMHistory.insert(toStore);
 }
-const RingBuf *Data::getHistory() { return &geigerCPMHistory; }
+const RingBuf<uint16_t,AVERAGE_SAMPLES> &Data::getHistory() { return geigerCPMHistory; }
 
 // inverter access functions
 uint16_t Data::getInverterVoltage() { return inverterVoltage; }
