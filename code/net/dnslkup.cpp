@@ -24,7 +24,7 @@
 
 static uint8_t dnstid_l = 0; // a counter for transaction ID
 // src port high byte must be a a0 or higher:
-#define DNSCLIENT_SRC_PORT_H 0xe0 
+#define DNSCLIENT_SRC_PORT_H 0xe0
 static uint8_t dnsip[4] = { 8, 8, 8, 8 }; // the google public DNS, don't change unless there is a real need
 static uint8_t haveDNSanswer = 0;
 static uint8_t dns_answerip[4];
@@ -70,7 +70,7 @@ uint8_t string_is_ipv4(const char *str) {
 }
 
 // send a DNS udp request packet
-// See http://www.ietf.org/rfc/rfc1034.txt 
+// See http://www.ietf.org/rfc/rfc1034.txt
 // and http://www.ietf.org/rfc/rfc1035.txt
 // gwmac is the internal mac addess of your router
 // because we use 8.8.8.8 as a DNS server

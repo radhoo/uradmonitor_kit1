@@ -30,6 +30,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <avr/pgmspace.h>
 
 #include "app/UI.h"
 // local headers
@@ -174,18 +175,18 @@ void callback_browser(uint16_t webstatuscode, uint16_t datapos, uint16_t len) {
 			data.setStateBeep(Data::ENABLED);
 		else if (strstr_P(serverAnswer,PSTR("alarm")))
 			data.setStateAlarm(Data::ENABLED);
-		else if (jsonKeyFind(serverAnswer, "setid", value, 10)) {
+		else if (jsonKeyFind(serverAnswer, PSTR("setid"), value, 10)) {
 			eeprom_busy_wait();
 			eeprom_write_dword((uint32_t *) EEPROM_ADDR_DEVID, hex2int(value));
 			eeprom_busy_wait();
 			aux_softwarereset();
-		} else if (jsonKeyFind(serverAnswer, "sendint", value, 10)) {
+		} else if (jsonKeyFind(serverAnswer, PSTR("sendint"), value, 10)) {
 			data.setNetworkSendInterval(atoi(value));
 			eeprom_busy_wait();
 			eeprom_write_word((uint16_t *) EEPROM_ADDR_SENDINT, data.getNetworkSendInterval());
 			// set WDT reset interval against sendInterval
 			wd.wdt_setRebootSeconds(data.getNetworkSendInterval() + WARMUP + 180);
-		} else if (jsonKeyFind(serverAnswer, "morse", value, 10)) {
+		} else if (jsonKeyFind(serverAnswer, PSTR("morse"), value, 10)) {
 			morse.encode(value);
 		} else if (strstr_P(serverAnswer,PSTR("reset"))) {
 			aux_softwarereset();
@@ -233,7 +234,7 @@ void early_run(void) {
 	// 2.CONFIGURE INTERRUPT INT0  to count pulses from Geiger Counter, connected on PIN PD2
 	EICRA |= _BV(ISC00) | _BV(ISC01);// Configure INT0 to trigger on RISING EDGE - Instead of MCUCR, you need to use EICRA. mega8:MCUCR , mega328p: EICR
 	EIMSK |= _BV(INT0); // Configure INT0 to fire interrupts - Instead of GICR, you need to use EIMSK mega8:GICR , mega328p: EIMSK
-	
+
 	// 3.CREATE Timer T0 to count seconds
 	time.init(callback_timeSecond, callback_timeMinute);
 	// start couting seconds for the partial CPM
@@ -347,17 +348,17 @@ void early_run(void) {
 					// when sending data, make sure you include the timestamp with each packet, or the server will reject your data
 					// see expProtocol.h for the possible sensors supported by the server
 #ifdef USE_BME280_SENSOR
-					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS"/%lu/"ID_VERSION_HW"/%u/"ID_VERSION_SW"/%u/"
-							ID_SBM20_CPM"/%lu/"ID_INVERTERVOLTAGE_VOLTS"/%u/"ID_INVERTERDUTY_PM"/%u/"
-							ID_TEMPERATURE_CELSIUS"/%.2f/"ID_PRESSURE_PASCALS"/%lu/"ID_HUMIDITY_RH"/%u"),
-							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW,
+					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS "/%lu/" ID_VERSION_HW "/%u/" ID_VERSION_SW "/%u/" ID_TUBE_TYPE "/%u/"
+							ID_SBM20_CPM "/%lu/" ID_INVERTERVOLTAGE_VOLTS "/%u/" ID_INVERTERDUTY_PM "/%u/"
+							ID_TEMPERATURE_CELSIUS "/%.2f/" ID_PRESSURE_PASCALS "/%lu/" ID_HUMIDITY_RH "/%u"),
+							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW, (uint8_t)GEIGER_TUBE,
 							data.getGeigerCPM(),data.getInverterVoltage(), data.getInverterDuty(),
 							data.getTemperature(), data.getPressure(), data.getHumidity()
 						);
 #else
-					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS"/%lu/"ID_VERSION_HW"/%u/"ID_VERSION_SW"/%u/"
-												ID_SBM20_CPM"/%lu/"ID_INVERTERVOLTAGE_VOLTS"/%u/"ID_INVERTERDUTY_PM"/%u"),
-							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW,
+					sprintf_P(ethParams, PSTR(ID_TIME_SECONDS "/%lu/" ID_VERSION_HW "/%u/" ID_VERSION_SW "/%u/" ID_TUBE_TYPE "/%u/"
+							ID_SBM20_CPM "/%lu/" ID_INVERTERVOLTAGE_VOLTS "/%u/" ID_INVERTERDUTY_PM "/%u"),
+							time.getTotalSec(), (uint8_t)VER_HW, (uint8_t)VER_SW, (uint8_t)GEIGER_TUBE,
 							data.getGeigerCPM(),data.getInverterVoltage(), data.getInverterDuty()
 						);
 
@@ -385,13 +386,16 @@ void early_run(void) {
 				// create webserver page: pay attention to buffers used: buffer and ethBuffer as small in size!
 				sprintf_P(buffer, PSTR("{\"data\":{ \"id\":\"%08lX\","), data.getDeviceID());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
-				sprintf_P(buffer, PSTR("\"type\":\"%X\",\"detector\":\"%s\",\"cpm\":%lu,"),DEV_CLASS, aux_detectorName(GEIGER_TUBE), data.getGeigerCPM());
+				sprintf_P(buffer, PSTR("\"type\":\"%X\",\"detector\":\"" DETECTOR_NAME "\",\"cpm\":%lu,"), DEV_CLASS, data.getGeigerCPM());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 #ifdef USE_BME280_SENSOR
-				sprintf_P(buffer, PSTR("\"temperature\":%.2f,\"pressure\":%lu,\"humidity\":%.2f,"), data.getTemperature(), data.getPressure(), data.getHumidity());
+				sprintf_P(buffer, PSTR("\"temperature\":%.2f,\"pressure\":%lu,\"humidity\":%u,"), data.getTemperature(), data.getPressure(), data.getHumidity());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 #endif
-				sprintf_P(buffer, PSTR("\"uptime\": %lu}}"), time.getTotalSec());
+				sprintf_P(buffer, PSTR("\"uptime\": %lu}"), time.getTotalSec());
+				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
+				sprintf_P(buffer, PSTR(",\"stats\": {\"cpmMin\":%u,\"cpmMax\":%u,\"cpmAverage\":%u,\"sampleCount\":%u}}"),
+					data.getGeigerCPMLow(), data.getGeigerCPMHigh(), data.getGeigerCPMRecentAverage(), data.getGeigerIntervalCount());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 			}
 			// server: serve mini webpage
@@ -400,7 +404,7 @@ void early_run(void) {
 				// create webserver page: pay attention to buffers used: buffer and ethBuffer as small in size!
 				sprintf_P(buffer, PSTR("<b>uRADMonitor %08lX</b><br>"), data.getDeviceID());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
-				sprintf_P(buffer, PSTR("type:%X hw:%u sw:%u %s<hr>"), DEV_CLASS, VER_HW, VER_SW, aux_detectorName(GEIGER_TUBE));
+				sprintf_P(buffer, PSTR("type:%X hw:%u sw:%u " DETECTOR_NAME "<hr>"), DEV_CLASS, VER_HW, VER_SW);
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 				sprintf_P(buffer, PSTR("radiation:%luCPM<br>"), data.getGeigerCPM());
 				dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
@@ -409,9 +413,8 @@ void early_run(void) {
 					sprintf_P(buffer, PSTR("Ready in %ds<br><br>"), WARMUP - time.getTotalSec());
 					dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 				} else {
-					sprintf_P(buffer, PSTR("temperature:%.2fC<br>pressure:%luPa<br>"), data.getTemperature(), data.getPressure());
+					sprintf_P(buffer, PSTR("temperature:%.2fC<br>pressure:%luPa<br>humidty:%uRH<br>"), data.getTemperature(), data.getPressure(), data.getHumidity());
 					dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
-					sprintf_P(buffer, PSTR("humidty:%.2fRH<br>"), data.getHumidity());
 				}
 #endif
 				sprintf_P(buffer, PSTR("voltage:%uV<br>duty:%u%%<br>frequency:%.2fkHz<br>"),data.getInverterVoltage(), data.getInverterDuty() /10, INVERTER_FREQUENCY / 1000.0);
@@ -435,4 +438,4 @@ void early_run(void) {
 	} // if network data.getStateNetwork() is ok
 
 	return (0);
-}  
+}

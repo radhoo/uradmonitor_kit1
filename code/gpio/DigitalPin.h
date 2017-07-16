@@ -5,10 +5,10 @@
  *  License:        GPL v3
  *  Description:    I/O control general class for AVR microcontrollers
  *  Project:        uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *  
+ *
  *  Copyright 2015 by Radu Motisan, radu.motisan@gmail.com
  *  Copyright 2016 by Magnasci SRL, www.magnasci.com
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -38,8 +38,8 @@ private:
     volatile uint8_t 	*m_pport;
     uint8_t				m_dq;
     uint8_t				mask1, mask0;
-    Type				m_type;
-    bool 				m_state;
+    Type				m_type : 1;
+    bool 				m_state : 1;
 
     // Get the other registers from the PORT
     #define PORT2DDR(x) (x - 1)
@@ -86,7 +86,7 @@ public:
         write(rhs.read());
         return *this;
     }
-    
+
     /*DigitalOut& operator ! () const {
     	return *this;
     }*/

@@ -23,7 +23,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BME280.h"
+#include "bme280.h"
 
 
 uint8_t BME280::uread8(uint8_t reg) {
@@ -105,7 +105,7 @@ void BME280::readSensors(float *temperature, uint32_t *pressure, uint8_t *humidi
 	var1 = ((((adc_T >> 3) - ((int32_t)reg_T1 << 1))) * ((int32_t)reg_T2)) >> 11;
 	var2 = (((((adc_T >> 4) - ((int32_t)reg_T1)) * ((adc_T >> 4) - ((int32_t)reg_T1))) >> 12) * ((int32_t)reg_T3)) >> 14;
 	t_fine = var1 + var2;
-	*temperature =  (((t_fine * 5 + 128) >> 8) / 100) ;
+	*temperature = ((float)((t_fine * 5 + 128) >> 8)) / 100.0;
 
 	// pressure
 	int32_t adc_P = ((int32_t)buffer[0] << 12) | ((int32_t)buffer[1] << 4) | ((int32_t)buffer[2] >> 4) ;

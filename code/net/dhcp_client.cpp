@@ -8,7 +8,7 @@
  * A DHCP client.
  * This code uses the UDP_client framework. You need to enable UDP_client in ip_config.h to use this.
  *
- * DHCP requires the periodic renewal of addresses. For this 
+ * DHCP requires the periodic renewal of addresses. For this
  * purpose you must call the function dhcp_6sec_tick() every 6 sec.
  * If you do not call it then you can still get an initial IP
  * (without retry in case of failure) but there will be no
@@ -37,8 +37,8 @@ static uint8_t dhcp_tid = 0;
 static uint16_t dhcp_opt_leasetime_minutes = 0;
 
 char *g_hostname = NULL;
-// 
-// The relevant RFCs are 
+//
+// The relevant RFCs are
 // DHCP protocol: http://tools.ietf.org/html/rfc1541
 // newer version:
 // DHCP protocol: http://tools.ietf.org/html/rfc2131
@@ -206,7 +206,7 @@ uint8_t is_dhcp_msg_for_me(uint8_t *buf, uint16_t plen,
 
 }
 
-// check if this message was part of a renew or 
+// check if this message was part of a renew or
 uint8_t dhcp_is_renew_tid(uint8_t *buf, uint16_t plen) {
 	if (plen < 0x100)
 		return (0);
@@ -346,10 +346,10 @@ uint8_t send_dhcp_request(uint8_t *buf, const uint8_t transactionID) {
 	return (0);
 }
 
-// The renew procedure is described in rfc2131. 
-// We send DHCPREQUEST and 'server identifier' MUST NOT be filled 
-// in, 'requested IP address' option MUST NOT be filled in, 'ciaddr' 
-// MUST be filled. 
+// The renew procedure is described in rfc2131.
+// We send DHCPREQUEST and 'server identifier' MUST NOT be filled
+// in, 'requested IP address' option MUST NOT be filled in, 'ciaddr'
+// MUST be filled.
 // The rfc suggest that I can send the DHCPREQUEST in this case as
 // a unicast message and not as a broadcast message but test with
 // various DHCP servers show that not all of them listen to
@@ -380,7 +380,7 @@ uint8_t send_dhcp_renew_request(uint8_t *buf, const uint8_t transactionID,
 // and all boards reboot afterwards at the same time. At that moment they
 // must all have different TIDs otherwise there will be an IP address mess-up.
 //
-// The function returns 1 once we have a valid IP. 
+// The function returns 1 once we have a valid IP.
 // At this point you must not call the function again.
 uint8_t packetloop_dhcp_initial_ip_assignment(uint8_t *buf, uint16_t plen, uint8_t initial_tid, char *hostname) {
 	g_hostname = hostname;
@@ -449,7 +449,7 @@ uint8_t packetloop_dhcp_initial_ip_assignment(uint8_t *buf, uint16_t plen, uint8
 	return (0);
 }
 
-// call this to get the current IP 
+// call this to get the current IP
 // returns {0,0,0,0} in assigend_yiaddr if called before we have a valid IP been offered
 // otherwise returns back the IP address (4bytes) in assigend_yiaddr.
 // assigend_netmask will hold the netmask and assigend_gw the default gateway

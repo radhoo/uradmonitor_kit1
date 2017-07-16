@@ -91,7 +91,7 @@ UI::UI(LCD_5110 *lcd, DigitalPin *speaker, DigitalPin *button, Data *data, char 
 	 		m_lcd->send(m_buffer, m_size,
 				PSTR("%02d:%02d:%02d%c %c%s"
 #ifdef USE_BME280_SENSOR
-					"%05.1f %04lu %03u"
+					"%5.1f %04lu %3u"
 					"%c%cC%c%c%c%ch%c%c%cRH%c"
 
 #else
@@ -99,7 +99,7 @@ UI::UI(LCD_5110 *lcd, DigitalPin *speaker, DigitalPin *button, Data *data, char 
 					"%c%c%c%c%c%c%c%c%c%c%c%c%c%c"
 #endif
 
-					"%c %.2f %c%s %c"
+					"%c %5.2f %c%s%c"
 					"%c%c%s%c%c"
 					"%3dV %02d%% %03d%c%c"),
 				// line 1: time, state symbols and battery
@@ -127,23 +127,24 @@ UI::UI(LCD_5110 *lcd, DigitalPin *speaker, DigitalPin *button, Data *data, char 
 	 	 case UI_PAGE_STATS:
 	 		m_lcd->send(m_buffer, m_size, PSTR(
 					"KIT1  %08lX" \
-					"Time: %02d:%02d:%02d" \
-					"              " \
-					"              " \
-					"              " \
-					"%s tube %d"),
+					"%02d:%02d:%02d %5d" \
+					"Min CPM %6d" \
+					"Avg 60s %6d" \
+					"Max %10d" \
+					DETECTOR_NAME " tube %d"),
 	 			// line 1: id
 	 			m_data->getDeviceID(),
-				// line 2: time
+				// line 2: time and sample count
 				m_data->getTimeCounter()->getHour(), m_data->getTimeCounter()->getMin(), m_data->getTimeCounter()->getSec(),
-				// line 3: total pulses from power on
-
-				// line 4: absolute average CPM
-
-				// line 5: maximum CPM
-
+				m_data->getGeigerIntervalCount(),
+				// line 3: min CPM
+				m_data->getGeigerCPMLow(),
+				// line 4: CPM average
+				m_data->getGeigerCPMRecentAverage(),
+				// line 5: max CPM
+				m_data->getGeigerCPMHigh(),
 				// line 6: geiger tube and firmware version
-				aux_detectorName(GEIGER_TUBE), VER_SW);
+				VER_SW);
 			break;
 	 	 case UI_PAGE_NETWORK:
 	 		if (m_data->getStateNetwork() == Data::ENABLED) {
@@ -230,7 +231,7 @@ void UI::loop(bool *refresh) {
 	}
 
 	// turn backlight off when timeout is reached, only if alarm is off, because in alarm mode screen is flickering
-	if (!m_data->getStateAlarm() && m_data->getTimeCounter()->getCount(TimeCounter::TIME_COUNTER_2) > BACKLIGHT_TIMEOUT) {
+	if (BACKLIGHT_TIMEOUT > 0 && !m_data->getStateAlarm() && m_data->getTimeCounter()->getCount(TimeCounter::TIME_COUNTER_2) > BACKLIGHT_TIMEOUT) {
 		m_lcd->setBacklight(Data::DISABLED);
 	}
 

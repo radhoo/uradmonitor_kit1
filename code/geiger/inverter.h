@@ -5,10 +5,10 @@
  *	License:		GPL v3
  *	Description:	high voltage inverter class to drive a Geiger tube for AVR microcontrollers
  *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *  
+ *
  *	Copyright 2013 by Radu Motisan, radu.motisan@gmail.com
  *	Copyright 2016 by Magnasci SRL, www.magnasci.com
- *  
+ *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation, either version 3 of the License, or
@@ -43,14 +43,14 @@
 
 class INVERTER {
 	uint16_t duty;								// used to set the duty cycle to adjust the output voltage
-	
+
 	void setDuty(uint16_t d);
-	
+
 	public:
-	
-	// CREATE Timer T1 PWM to drive inverter for regulated Geiger tube voltage 
+
+	// CREATE Timer T1 PWM to drive inverter for regulated Geiger tube voltage
 	void initPWM();
-	
+
 	// check tube voltage and adjust duty cycle to match tube given threshold level (400V)
 	// return false on critical error (when we hit the duty max), true if all ok
 	bool adjustDutyCycle(uint16_t measuredVoltage, uint16_t targetVoltage = INVERTER_THRESHOLD);

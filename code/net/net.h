@@ -1,7 +1,7 @@
 /*********************************************
  * vim:sw=8:ts=8:si:et
  * To use the above modeline in vim you must have "set modeline" in your .vimrc
- * Author: Guido Socher 
+ * Author: Guido Socher
  * Copyright:LGPL V2
  * See http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html
  *
@@ -71,7 +71,7 @@
 #define IP_ID_H_P 0x12
 #define IP_ID_L_P 0x13
 
-#define IP_PROTO_P 0x17  
+#define IP_PROTO_P 0x17
 
 #define IP_PROTO_ICMP_V 1
 #define IP_PROTO_TCP_V 6

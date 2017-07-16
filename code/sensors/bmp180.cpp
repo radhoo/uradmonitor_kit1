@@ -54,7 +54,7 @@ void BMP180::getcalibration() {
 	mc = ((int)buff[0] <<8 | ((int)buff[1]));
 	readmem(BMP180_ADDR, BMP180_REGMD, buff, 2);
 	md = ((int)buff[0] <<8 | ((int)buff[1]));
-}	
+}
 
 
 int32_t BMP180::readRawTemperature(void) {
@@ -64,15 +64,15 @@ int32_t BMP180::readRawTemperature(void) {
 	writemem(BMP180_ADDR, BMP180_REGCONTROL, BMP180_REGREADTEMPERATURE);
 	_delay_ms(5); // min. 4.5ms read Temp delay
 	readmem(BMP180_ADDR, BMP180_REGCONTROLOUTPUT, buff, 2);
-	
+
 	int32_t ut,x1,x2;
 	//uncompensated temperature value
-	ut = ((int32_t)buff[0] << 8 | ((int32_t)buff[1])); 
+	ut = ((int32_t)buff[0] << 8 | ((int32_t)buff[1]));
 	//compensate
 	x1 = ((int32_t)ut - ac6) * ac5 >> 15;
 	x2 = ((int32_t)mc << 11) / (x1 + md);
 	int32_t comp_ut = x1 + x2;
-	
+
 	return comp_ut;
 }
 
@@ -82,11 +82,11 @@ uint32_t BMP180::readRawPressure(int32_t rawtemperature ) {
 	writemem(BMP180_ADDR, BMP180_REGCONTROL, BMP180_REGREADPRESSURE + (BMP180_MODE << 6));
 	_delay_ms(2 + (3<<BMP180_MODE));
 	readmem(BMP180_ADDR, BMP180_REGCONTROLOUTPUT, buff, 3);
-	
+
 	int32_t up,x1,x2,x3,b3,b6,p;
 	uint32_t b4,b7;
 	// uncompensated pressure value
-	up = ((((int32_t)buff[0] <<16) | ((int32_t)buff[1] <<8) | ((int32_t)buff[2])) >> (8-BMP180_MODE)); 
+	up = ((((int32_t)buff[0] <<16) | ((int32_t)buff[1] <<8) | ((int32_t)buff[2])) >> (8-BMP180_MODE));
 
 	//calculate raw pressure, compensated
 	b6 = rawtemperature - 4000;

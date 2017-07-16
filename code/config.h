@@ -31,6 +31,9 @@
 
 #define USE_ETHERNET
 
+// statistics
+#define 			AVERAGE_SAMPLES 		12 		// number of 5-second intervals which define the average 
+
 // user upload credetials, create your account on www.uradmonitor.com/dashboard
 // the Dashboard shows the user-id and the user-key
 #define				USER_ID					""

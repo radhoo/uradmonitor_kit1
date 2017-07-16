@@ -5,10 +5,10 @@
  *	License:		GPL v3
  *	Description:	time handling subsystem for AVR microcontrollers - implement a time counter
  *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *  
+ *
  *	Copyright 2013 by Radu Motisan, radu.motisan@gmail.com
  *	Copyright 2016 by Magnasci SRL, www.magnasci.com
- *  
+ *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation, either version 3 of the License, or
@@ -28,7 +28,7 @@
 void  TimeCounter::init(TimeCallback callSec, TimeCallback callMin) {
 	ptrFuncSec = callSec;
 	ptrFuncMin = callMin;
-	
+
 	TIMSK0 |= (1 << TOIE0); //atmega168
 	sei(); // enable interrupts
 	TCCR0B |= _BV(CS01) | _BV(CS00); // set prescaler to 64 and start the timer
