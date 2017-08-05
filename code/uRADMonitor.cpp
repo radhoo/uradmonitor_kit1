@@ -412,6 +412,7 @@ void early_run(void) {
 					sprintf_P(buffer, PSTR("temperature:%.2fC<br>pressure:%luPa<br>"), data.getTemperature(), data.getPressure());
 					dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 					sprintf_P(buffer, PSTR("humidty:%.2fRH<br>"), data.getHumidity());
+					dat_p = fill_tcp_data_len(ethBuffer,dat_p, (uint8_t *)buffer, strlen(buffer));
 				}
 #endif
 				sprintf_P(buffer, PSTR("voltage:%uV<br>duty:%u%%<br>frequency:%.2fkHz<br>"),data.getInverterVoltage(), data.getInverterDuty() /10, INVERTER_FREQUENCY / 1000.0);

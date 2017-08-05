@@ -34,7 +34,7 @@
 
 // user upload credetials, create your account on www.uradmonitor.com/dashboard
 // the Dashboard shows the user-id and the user-key
-#define				USER_ID					"1"
+#define				USER_ID					""
 #define				USER_KEY				""
 
 // PRIVATE CONFIGURATION SPACE, don't change the values below unless you know what you are doing
