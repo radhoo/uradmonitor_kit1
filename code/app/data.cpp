@@ -22,7 +22,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Data.h"
+#include "data.h"
 
 Data::Data(TimeCounter *time) {
 	m_time = time;
