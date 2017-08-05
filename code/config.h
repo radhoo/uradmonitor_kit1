@@ -27,20 +27,21 @@
 
 // USER CONFIGURATION SPACE
 // additional sensors sample
-// #define USE_BME280_SENSOR
+
+#define USE_BME280_SENSOR
 
 #define USE_ETHERNET
 
 // user upload credetials, create your account on www.uradmonitor.com/dashboard
 // the Dashboard shows the user-id and the user-key
-#define				USER_ID					""
+#define				USER_ID					"1"
 #define				USER_KEY				""
 
 // PRIVATE CONFIGURATION SPACE, don't change the values below unless you know what you are doing
 // device identification
 #define				DEV_CLASS				0x13
-#define				VER_SW					122
-#define				VER_HW					105
+#define				VER_SW					123
+#define				VER_HW					106
 
 // constants for this device
 #define				P_TUBEVOLFB_PIN			PC2		// voltage divider to measure high voltage

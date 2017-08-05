@@ -83,8 +83,8 @@ uint16_t Data::getBatteryVoltage() { return batteryVoltage; }
 void Data::setBatteryVoltage(uint16_t milivolts) { batteryVoltage = milivolts; }
 
 // geiger varios dose& stats access calls
-float Data::getGeigerDose() { return geigerDose; }
-void Data::setGeigerDose(float dose) { geigerDose = dose; }
+double Data::getGeigerDose() { return geigerDose; }
+void Data::setGeigerDose(double dose) { geigerDose = dose; }
 uint32_t Data::getGeigerCPM() { return geigerCPM; }
 void Data::setGeigerCPM(uint32_t cpm) { geigerCPM = cpm; }
 

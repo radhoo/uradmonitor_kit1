@@ -68,19 +68,19 @@ class Data {
 						networkHTTPCode;				// server returned HTTP code
 	uint32_t			geigerCPM;						// radiation dose as CPM
 
-	float				geigerDose;						// radiation dose approximated to equivalent dose based on geiger tube factor
+	double				geigerDose;						// radiation dose approximated to equivalent dose based on geiger tube factor
 
 
 	// Add any new sensors here
 #ifdef USE_BME280_SENSOR
 	BME280 				bme;
-	float				temperature;
+	double				temperature;
 	uint32_t			pressure;
-	uint8_t				humidity;
+	double				humidity;
 public:
-	float				getTemperature() { return temperature; }
+	double				getTemperature() { return temperature; }
 	uint32_t			getPressure() { return pressure; }
-	uint8_t				getHumidity() { return humidity; }
+	double				getHumidity() { return humidity; }
 #endif
 
 public:
@@ -125,8 +125,8 @@ public:
 	void setBatteryVoltage(uint16_t milivolts);
 
 	// geiger varios dose& stats access calls
-	float getGeigerDose();
-	void setGeigerDose(float dose);
+	double getGeigerDose();
+	void setGeigerDose(double dose);
 	uint32_t getGeigerCPM();
 	void setGeigerCPM(uint32_t cpm);
 
