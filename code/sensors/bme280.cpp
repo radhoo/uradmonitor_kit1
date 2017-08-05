@@ -25,7 +25,7 @@
 ** along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "BME280.h"
+#include "bme280.h"
 
 
 
