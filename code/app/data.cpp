@@ -22,7 +22,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Data.h"
+#include "data.h"
 
 Data::Data(TimeCounter *time) {
 	m_time = time;
@@ -83,8 +83,8 @@ uint16_t Data::getBatteryVoltage() { return batteryVoltage; }
 void Data::setBatteryVoltage(uint16_t milivolts) { batteryVoltage = milivolts; }
 
 // geiger varios dose& stats access calls
-float Data::getGeigerDose() { return geigerDose; }
-void Data::setGeigerDose(float dose) { geigerDose = dose; }
+double Data::getGeigerDose() { return geigerDose; }
+void Data::setGeigerDose(double dose) { geigerDose = dose; }
 uint32_t Data::getGeigerCPM() { return geigerCPM; }
 void Data::setGeigerCPM(uint32_t cpm) { geigerCPM = cpm; }
 

@@ -1,30 +1,36 @@
-/**
- *	File:       	bmp180.cpp
- *	Version:  		1.0
- *	Date:       	2012
- *	License:		GPL v3
- *	Description:	AVR I2C Driver for Bosch BMP180, a MEMS sensor for Temperature and Pressure
- *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *
- *	Copyright 2012 by Radu Motisan, radu.motisan@gmail.com
- *	Copyright 2016 by Magnasci SRL, www.magnasci.com
- *
- *	This program is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- * 	(at your option) any later version.
- *
- *	This program is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * 	GNU General Public License for more details.
- *
- *	You should have received a copy of the GNU General Public License
- *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * BMP180 Sensor Library for AVR Microcontrollers
+ * Copyright (C) 2012, Radu Motisan , radu.motisan@gmail.com , All rights reserved.
+ * http://www.pocketmagic.net/
  */
 
-
 #include "bmp180.h"
+#include <util/delay.h>
+
+
+// i2c write
+/*void BMP180::writemem(BMP180_ADDR, uint8_t reg, uint8_t value) {
+	i2c_start_wait(BMP180_ADDR | I2C_WRITE);
+	i2c_write(reg);
+	i2c_write(value);
+	i2c_stop();
+}
+
+// i2c read
+void BMP180::readmem(BMP180_ADDR, uint8_t reg, uint8_t buff[], uint8_t bytes) {
+	uint8_t i =0;
+	i2c_start_wait(BMP180_ADDR | I2C_WRITE);
+	i2c_write(reg);
+	i2c_rep_start(BMP180_ADDR | I2C_READ);
+	for(i=0; i<bytes; i++) {
+		if(i==bytes-1)
+			buff[i] = i2c_readNak();
+		else
+			buff[i] = i2c_readAck();
+	}
+	i2c_stop();
+}*/
+
 
 
 // read the calibration data from sensor memory
@@ -76,7 +82,7 @@ int32_t BMP180::readRawTemperature(void) {
 	return comp_ut;
 }
 
-uint32_t BMP180::readRawPressure(int32_t rawtemperature ) {
+int32_t BMP180::readRawPressure(int32_t rawtemperature ) {
 	uint8_t buff[3];
 	memset(buff, 0, sizeof(buff));
 	writemem(BMP180_ADDR, BMP180_REGCONTROL, BMP180_REGREADPRESSURE + (BMP180_MODE << 6));
@@ -103,43 +109,49 @@ uint32_t BMP180::readRawPressure(int32_t rawtemperature ) {
 	x1 = (p >> 8) * (p >> 8);
 	x1 = (x1 * 3038) >> 16;
 	x2 = (-7357 * p) >> 16;
-	return p + ((x1 + x2 + 3791) >> 4);
+	int32_t comp_up = p + ((x1 + x2 + 3791) >> 4);
+	return comp_up;
+  
 }
 
-void  BMP180::init() {
+void  BMP180::begin() {
 	// read calibration data
 	getcalibration();
 }
 
-float BMP180::convertRawTemperature(int32_t rawtemperature) {
-	return ((rawtemperature + 8)>>4) / 10.0;
+double BMP180::convertRawTemperature(int32_t rawtemperature) {
+	return  ((rawtemperature + 8)>>4) / 10.0;
 }
 
-uint32_t BMP180::convertRawPressure(uint32_t rawpressure) {
+int32_t BMP180::convertRawPressure(int32_t rawpressure) {
 	return rawpressure + BMP180_UNITPAOFFSET;
 }
 
 // we assume sea level pressure is 101325 Pa
-float BMP180::convertAltitude(uint32_t pressure) {
+double BMP180::convertAltitude(int32_t pressure) {
 	return ((1 - pow(pressure/(double)101325, 0.1903 )) / 0.0000225577) + BMP180_UNITMOFFSET;
+	//  double altitude = 44330 * (1.0 - pow(pressure /(double)101325.0,0.1903));
 }
 
 // -------------------------------------------------------------------------- //
-float BMP180::readTemperature() {
+double BMP180::readTemperature() {
 	return convertRawTemperature(readRawTemperature());
 }
 
-uint32_t BMP180::readPressure() {
-	return convertRawPressure(readRawPressure(readRawTemperature()));
+int32_t BMP180::readPressure() {
+	int32_t rawtemperature = readRawTemperature();
+	int32_t rawpressure = readRawPressure(rawtemperature);
+	return convertRawPressure(rawpressure);	
 }
 
-float BMP180::readAltitude() {
+double BMP180::readAltitude() {
 	return convertAltitude(readPressure());
 }
 
-void BMP180::readAll(float *temperature, uint32_t *pressure, float *altitude) {
+void BMP180::readSensors(double *temperature, uint32_t *pressure, double *altitude) {
 	int32_t rawtemperature = readRawTemperature();
 	int32_t rawpressure = readRawPressure(rawtemperature);
+	//rawpressure = 10;
 	//
 	*temperature = convertRawTemperature(rawtemperature);
 	*pressure = convertRawPressure(rawpressure);

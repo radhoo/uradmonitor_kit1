@@ -1,26 +1,7 @@
-/**
- *	File:       	bmp180.cpp
- *	Version:  		1.0
- *	Date:       	2012
- *	License:		GPL v3
- *	Description:	AVR I2C Driver for Bosch BMP180, a MEMS sensor for Temperature Pressure
- *	Project:		uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *
- *	Copyright 2012 by Radu Motisan, radu.motisan@gmail.com
- *	Copyright 2016 by Magnasci SRL, www.magnasci.com
- *
- *	This program is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- * 	(at your option) any later version.
- *
- *	This program is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * 	GNU General Public License for more details.
- *
- *	You should have received a copy of the GNU General Public License
- *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * BMP180 Sensor Library for AVR Microcontrollers
+ * Copyright (C) 2012, Radu Motisan , radu.motisan@gmail.com , All rights reserved.
+ * http://www.pocketmagic.net/
  */
 
 
@@ -31,10 +12,11 @@
 #include <string.h>
 #include <math.h>
 #include <avr/io.h>
-#include <util/delay.h>
-#include "../config.h"
+
+//#include <util/delay.h>
 #include "../i2c/i2c.h"
 
+//#define BMP180_ADDR 0xEF
 #define BMP180_ADDR (0x77<<1) //0x77 default I2C address
 
 //registers
@@ -70,16 +52,18 @@ class BMP180 {
 	int16_t ac1, ac2, ac3, b1, b2, mb, mc, md;
 	uint16_t ac4, ac5, ac6;
 	
+	//void writemem(uint8_t reg, uint8_t value);
+	//void readmem(uint8_t reg, uint8_t buff[], uint8_t bytes);
 	void getcalibration();
 	int32_t readRawTemperature(void);
-	uint32_t readRawPressure(int32_t rawtemperature );
-	float convertRawTemperature(int32_t rawtemperature);
-	uint32_t convertRawPressure(uint32_t rawpressure) ;
-	float convertAltitude(uint32_t pressure);
+	int32_t readRawPressure(int32_t rawtemperature );
+	double convertRawTemperature(int32_t rawtemperature);
+	int32_t convertRawPressure(int32_t rawpressure) ;
+	double convertAltitude(int32_t pressure);
 public:
-	void	init();
-	float	readTemperature();
-	uint32_t readPressure();
-	float	readAltitude();
-	void readAll(float *temperature, uint32_t *pressure, float *altitude) ;
+	void	begin();
+	double	readTemperature();
+	int32_t readPressure();
+	double	readAltitude();
+	void readSensors(double *temperature, uint32_t *pressure, double *altitude) ;
 };

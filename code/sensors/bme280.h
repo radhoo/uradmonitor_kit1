@@ -1,27 +1,29 @@
-/**
- *    File:             bme280.cpp
- *    Version:          1.0
- *    Date:             2015
- *    License:          GPL v3
- *    Description:      AVR I2C Driver for Bosch BME280, a MEMS sensor for Temperature, Pressure and Humidity
- *    Project:          uRADMonitor KIT1, a hackable digital sensor monitoring tool with network interface
- *
- *    Copyright 2015 by Radu Motisan, radu.motisan@gmail.com
- *    Copyright 2016 by Magnasci SRL, www.magnasci.com
- *
- *    This program is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
- *
- *    You should have received a copy of the GNU General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*
+** BME280 Sensor Library for AVR Microcontrollers
+** Version: 	0.1.0
+** Date: 		September, 2015
+** License:		LGPL v3
+** Copyright: 	(C) 2009 - 2012 Radu Motisan, radu.motisan@gmail.com
+** Description:	The BME280 from Bosch is a temperature and pressure sensor with a I2C interface
+**
+** www.pocketmagic.net
+**
+** This file is a part of "Portable Environmental Monitor" open source project presented on
+** https://hackaday.io/project/4977-portable-environmental-monitor
+**
+** This project is free software; you can redistribute it and/or modify
+** it under the terms of the GNU Lesser General Public License as published
+** by the Free Software Foundation; either version 3 of the License,
+** or (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU Lesser General Public License
+** along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #pragma  once
 
@@ -30,12 +32,11 @@
 #include <string.h>
 #include <math.h>
 #include <avr/io.h>
-//#include <util/delay.h>
-#include "../config.h"
 #include "../i2c/i2c.h"
 
-// Connecting SDO to GND results in slave address 1110110 (0x76);
-// connection it to VDDIO results in slave address 1110111 (0x77), which is the same as BMP280’s I²C address
+// Connecting SDO to GND results in slave
+// address 1110110 (0x76); connection it to VDDIO results in slave address 1110111 (0x77), which
+// is the same as BMP280’s I²C address
 #define BME280_ADDR (0x76<<1) //0x77 default I2C address
 
 
@@ -80,10 +81,9 @@ class BME280 {
 
 public:
 
-	bool  	begin(uint8_t address = BME280_ADDR);
-	void 	readSensors(float *temperature, uint32_t *pressure, uint8_t *humidity);
+	bool  	begin(uint8_t addr = BME280_ADDR);
+	void 	readSensors(double *temperature, uint32_t *pressure, double *humidity);
 private:
-	uint8_t	 address;
 	uint16_t reg_T1;
 	int16_t  reg_T2;
 	int16_t  reg_T3;
