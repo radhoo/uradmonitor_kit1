@@ -44,6 +44,7 @@
 #include "misc/utils.h"
 #include "misc/morse.h"
 #include "misc/expProtocol.h"
+#include "serial/serial.h"
 
 // ethernet
 #include "net/ip_arp_udp_tcp.h"
@@ -126,6 +127,17 @@ void callback_timeSecond() {
 				// ask to send data online
 				data.setStateSend(Data::ENABLED);
 			}
+		}
+		// send CSV data out on serial every given interval
+		if (time.getTotalSec() > 10 && time.getTotalSec() % SERIAL_STATUS_INTERVAL == 0) {
+			char buf[32];
+			uint8_t len = 0;
+#ifdef USE_BME280_SENSOR
+			len = snprintf(buf, 40, "%lu,%lu,%.2f,%lu,%u\r\n", time.getTotalSec(), data.getGeigerCPM(), data.getTemperature(), data.getPressure(), data.getHumidity());
+#else
+			len = snprintf(buf, 32, "%lu,%lu\r\n", time.getTotalSec(), data.getGeigerCPM());
+#endif
+			serialSend((uint8_t*)buf, len);
 		}
 	}
 
@@ -243,10 +255,15 @@ void early_run(void) {
 	// 4.CREATE Timer T1 PWM to drive inverter for regulated Geiger tube voltage
 	data.getInverter().initPWM();
 
-	// 5. init sensors
+	// 5. init sensors and serial
 	morse.init(sbeep, lbeep, sdelay);
 	data.initSensors();
-
+	serialInit();
+#ifdef USE_BME280_SENSOR
+			serialSend((const uint8_t*)"time,cpm,temperature,pressure,humidity\r\n", 41);
+#else
+			serialSend((const uint8_t*)"time,cpm\r\n", 10);
+#endif
 
 	// 6. lcd init goes here
 	lcd.init();
@@ -310,6 +327,8 @@ void early_run(void) {
 
 		// read sensors, listen to button presses and refresh screen
 		ui.loop(&cmdRefresh);
+
+		checkSerialSend();
 
 #ifdef USE_ETHERNET
 

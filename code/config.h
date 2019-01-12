@@ -52,6 +52,7 @@
 #define				GEIGER_TUBE				GEIGER_TUBE_SBM20
 #define				WARMUP					0		// initial warmup interval before sensors are ready, use only if needed
 #define				READ_INTERVAL			5		// interval in seconds to read sensors
+#define				SERIAL_STATUS_INTERVAL	10 // interval in seconds to send CSV status via the serial port
 
 // user interaction
 #define				LONG_PRESS				2		// 2 seconds on central button count as a long press
