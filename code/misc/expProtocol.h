@@ -23,6 +23,13 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+  * Suggestion to disable unused sensors:
+  * - Add logic in the backend that if the provided unused sensor value is e.g. Not Applicable -> "NA" then the graph is no longer displayed/ rendered.
+  * - If it has a value greater or equal 0 it renders the graph with the uploaded value.
+  * This prevents unnecessary graph loads for the webserver.
+*/
+
 #define ID_TIME_SECONDS "01"			// compulsory: local time in seconds
 #define ID_TEMPERATURE_CELSIUS "02"		// optional: temperature in degrees celsius
 #define ID_PRESSURE_PASCALS "03"		// optional: barometric pressure in pascals
@@ -31,11 +38,23 @@
 #define ID_VOC_OHM "06"					// optional: volatile organic compounds in ohms
 #define ID_CO2_PPM "07"					// optional: carbon dioxide in ppm
 #define ID_CH2O_PPM "08"				// optional: formaldehyde in ppm
-#define ID_PM25_UGCM "09"				// optional: particulate matter in micro grams per cubic meter
+#define ID_PM25_UGCM "09"				// optional: PM2.5 particulate matter in micro grams per cubic meter
+#define ID_TUBE "10"					// optional: tube type ID
+#define ID_PM01_UGCM "11"       // optional: PM1 particulate matter in micro grams per cubic meter
+#define ID_PM10_UGCM "12"       // optional: PM10 particulate matter in micro grams per cubic meter
+#define ID_NOISE_DB "13"        // optional: Noise in dB
+#define ID_NOX_PPB "14"         // optional: Nitrogen dioxide in parts per billion (ppb)
+#define ID_O3_PPB "15"          // optional: Ozone in parts per billion (ppb)
+#define ID_SO2_UGCM "16"        // optional: Sulfur dioxide in micro grams per cubic meter
+#define ID_CO_PPM "17"          // optional: carbon monoxide in parts per million (ppm)
+#define ID_H2S_PPM "18"         // optional: Hydrogen Sulfide in parts per million (ppm)
+#define ID_PhH_PPM "19"         // optional: Benzene in parts per million (ppm)
+#define ID_Rn_CPM "20"          // optional: Radon measured on geiger tube in cpm
 #define ID_BATTERY_VOLTS "0A"			// optional: device battery voltage in volts
-#define ID_GEIGER_CPM "0B"				// optional: radiation measured on geiger tube in cpm
+#define ID_GEIGER_CPM "0B"				// optional: average radiation measured on geiger tube in cpm
+#define ID_GEIGER_CPM "0B1"				// optional: average radiation measured on geiger tube 01 in cpm
+#define ID_GEIGER_CPM "0B2"				// optional: average radiation measured on geiger tube 02 in cpm
 #define ID_INVERTERVOLTAGE_VOLTS "0C"	// optional: high voltage geiger tube inverter voltage in volts
 #define ID_INVERTERDUTY_PM "0D"			// optional: high voltage geiger tube inverter duty in ‰
 #define ID_VERSION_HW "0E"				// optional: hardware version
 #define ID_VERSION_SW "0F"				// optional: software firmware version
-#define ID_TUBE "10"					// optional: tube type ID
