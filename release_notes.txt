@@ -1,0 +1,5 @@
+HW 1.2.107 "ARTIFEX" SW124
+- ne 10K resistor between data in and vcc pin of the display, it will support better compatibility with different LCD boards, there are more manufacturers doing boards different way and some of them doesn't work properly, this should solve the problem for all.
+- footprint space for new Geiger tubes, the "M4011" and the " J305" added.
+- factors for the two new tubes added.
+- new tubes implemented on the server side

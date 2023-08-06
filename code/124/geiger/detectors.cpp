@@ -29,16 +29,24 @@
 char *aux_detectorName(uint8_t param) {
 	switch (param) {
 		case GEIGER_TUBE_SBM20: return "SBM20";
-		case GEIGER_TUBE_SI29BG:return "SI29BG";
+		case GEIGER_TUBE_SI29BG: return "SI29BG";
 		case GEIGER_TUBE_SBM19: return "SBM19";
-		case GEIGER_TUBE_STS5:  return " STS5";
+		case GEIGER_TUBE_LND712: return "LND712";
+		case GEIGER_TUBE_SBM20M: return "SBM20M";
 		case GEIGER_TUBE_SI22G: return "SI22G";
+		case GEIGER_TUBE_STS5: return "STS5";
 		case GEIGER_TUBE_SI3BG: return "SI3BG";
 		case GEIGER_TUBE_SBM21: return "SBM21";
-		case GEIGER_TUBE_SI1G:  return " SI1G";
+		case GEIGER_TUBE_SBT9: return "SBT9";
+		case GEIGER_TUBE_SI1G: return "SI1G";
+		case GEIGER_TUBE_SI8B: return "SI8B";
+		case GEIGER_TUBE_SBT10A: return "SBT10A";
+		case GEIGER_TUBE_J305:	return " J305";
+		case GEIGER_TUBE_M4011: return "M4011";
 		default: return "unknown";
 	}
 }
+
 
 uint8_t getDetector(uint8_t param) {
 	switch (param) {
@@ -53,14 +61,21 @@ uint8_t getDetector(uint8_t param) {
 
 float aux_detectorFactor(uint8_t param) {
 	switch (param) {
-		case GEIGER_TUBE_SBM20: 	return 0.006315;
-		case GEIGER_TUBE_SI29BG: 	return 0.010000;
-		case GEIGER_TUBE_SBM19: 	return 0.001500;
-		case GEIGER_TUBE_STS5: 		return 0.006666;
-		case GEIGER_TUBE_SI22G: 	return 0.001714;
-		case GEIGER_TUBE_SI3BG: 	return 0.631578;
-		case GEIGER_TUBE_SBM21: 	return 0.048000;
-		case GEIGER_TUBE_SI1G:		return 0.006000;
+		case GEIGER_TUBE_SBM20: 	return 0.006315; // CPM 19
+		case GEIGER_TUBE_SI29BG: 	return 0.010000; // CPM 12
+		case GEIGER_TUBE_SBM19: 	return 0.001500; // CPM 80
+		case GEIGER_TUBE_LND712: 	return 0.005940; // CPM 20.20
+		case GEIGER_TUBE_SBM20M:	return 0.013333; // CPM 9
+		case GEIGER_TUBE_SI22G: 	return 0.001714; // CPM 70
+		case GEIGER_TUBE_STS5: 		return 0.006666; // CPM 18
+		case GEIGER_TUBE_SI3BG: 	return 0.631578; // CPM 0.19
+		case GEIGER_TUBE_SBM21: 	return 0.048000; // CPM 2.5
+		case GEIGER_TUBE_SBT9: 		return 0.010900; // CPM 11
+		case GEIGER_TUBE_SI1G:		return 0.006000; // CPM 20
+		case GEIGER_TUBE_SI8B:		return 0.001108; // 
+		case GEIGER_TUBE_SBT10A:	return 0.001105; // 
+		case GEIGER_TUBE_J305:		return 0.008120;
+		case GEIGER_TUBE_M4011:		return 0.006623; 
 		default: 0;
 	}
 }
